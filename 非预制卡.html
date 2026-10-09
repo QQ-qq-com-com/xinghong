@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<title>8103102 个人开非预制卡｜产品代码查询</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+:root{
+  --primary:#2563eb;--primary-dark:#1d4ed8;--primary-light:#dbeafe;
+  --success:#10b981;--success-light:#d1fae5;
+  --danger:#ef4444;--danger-light:#fee2e2;
+  --warn:#b45309;--warn-light:#fef3c7;
+  --bg:#f1f5f9;--card:#ffffff;--sub:#f8fafc;
+  --border:#e2e8f0;--border2:#f1f5f9;
+  --text:#0f172a;--text2:#475569;--text3:#94a3b8;
+  --r:12px;--r-xl:20px;
+  --shadow:0 4px 12px rgba(15,23,42,.08);
+  --shadow-lg:0 10px 25px rgba(15,23,42,.10);
+  --shadow-modal:0 20px 60px rgba(15,23,42,.18);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{min-height:100%;}
+body{font-family:system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;padding:24px 14px 48px;}
+.container{max-width:920px;margin:0 auto;}
+.header{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;border-radius:var(--r-xl);padding:24px 28px;box-shadow:var(--shadow-lg);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;}
+.header h1{font-size:23px;}
+.header p{font-size:13px;opacity:.85;margin-top:4px;}
+.badge{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);padding:6px 14px;border-radius:999px;font-size:14px;}
+.backtip{margin-top:14px;background:var(--warn-light);border:1px solid #fde68a;color:var(--warn);border-radius:var(--r);padding:10px 16px;font-size:13px;}
+.backtip b{font-weight:700;}
+.toolbar{margin-top:18px;background:var(--card);border:1px solid var(--border);border-radius:var(--r-xl);padding:20px;box-shadow:var(--shadow);}
+.group-title{font-size:13px;color:var(--text3);font-weight:600;margin:0 0 10px;}
+.row{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px;}
+.row:last-child{margin-bottom:0;}
+.item{flex:0 1 calc(50% - 6px);}
+.row3 .item{flex:0 1 calc(33.33% - 8px);}
+.btn{width:100%;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:13px 6px;border-radius:999px;font-size:14px;font-weight:600;border:none;cursor:pointer;transition:.18s;font-family:inherit;outline:none;}
+.btn:hover{filter:brightness(1.05);box-shadow:0 2px 8px rgba(15,23,42,.08);}
+.btn:active{transform:scale(.97);filter:none;box-shadow:none;}
+.b-p{background:var(--primary);color:#fff;}.b-p:hover{background:var(--primary-dark);}
+.b-g{background:#fff;color:var(--text2);border:1px solid var(--border);}.b-g:hover{background:#eef2f7;border-color:#cbd5e1;}
+.b-d{background:var(--danger-light);color:#dc2626;border:1px solid #fecdd3;}.b-d:hover{background:#fecdd3;}
+.b-s{background:var(--success);color:#fff;}.b-s:hover{background:#059669;}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none;}
+.btn-sm{width:auto;padding:9px 18px;font-size:13px;}
+.btn-sec{background:transparent;border:1px dashed var(--border);color:var(--text2);}
+.btn-sec:active{background:var(--sub);}
+.exp-btns{display:flex;gap:8px;flex-wrap:wrap;}
+.main{margin-top:18px;background:var(--card);border:1px solid var(--border);border-radius:var(--r-xl);padding:24px 26px;box-shadow:var(--shadow);}
+.sec{font-size:16px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+.sec::before{content:"";width:5px;height:18px;background:linear-gradient(180deg,var(--primary),#60a5fa);border-radius:3px;}
+.fi{margin-bottom:20px;}
+.lab{display:block;font-size:14px;font-weight:600;color:var(--text2);margin-bottom:8px;}
+.wrap{position:relative;display:block;}
+.wrap .arrow{position:absolute;right:12px;top:50%;transform:translateY(-50%);width:18px;height:18px;cursor:pointer;color:var(--text3);pointer-events:auto;z-index:5;user-select:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;}
+.wrap .arrow *{pointer-events:none;width:100%;height:100%;display:block;}
+.wrap .arrow:hover{color:#64748b;}
+input.dd{cursor:pointer;background:var(--sub);user-select:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;}
+input.dd:focus{background:var(--sub);}
+input[type=text],input[type=search],textarea{width:100%;padding:13px 38px 13px 16px;font-size:15px;border:1px solid var(--border);border-radius:var(--r);background:var(--sub);color:var(--text);outline:none;transition:.2s;font-family:inherit;}
+input[type=text].plain,input[type=search].plain{padding-right:16px;}
+input[type=text]:focus,input[type=search]:focus,textarea:focus{border-color:var(--primary);background:#fff;box-shadow:0 0 0 4px rgba(37,99,235,.12);}
+input.ro{background:#eef2f7;color:var(--text2);cursor:not-allowed;user-select:none;-webkit-user-select:none;}
+input.ro:focus{background:#eef2f7;border-color:var(--border);box-shadow:none;}
+textarea{min-height:90px;resize:vertical;}
+.hint{margin-top:6px;font-size:12px;color:var(--text3);}
+.drop{position:absolute;left:0;right:0;top:calc(100% + 6px);background:#fff;border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow-lg);max-height:280px;overflow:auto;z-index:60;display:none;}
+.drop.show{display:block;}
+.ditem{padding:12px 16px;font-size:14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border2);cursor:pointer;}
+.ditem:last-child{border-bottom:none;}
+.ditem:hover{background:var(--primary-light);}
+.ditem .code{color:var(--primary);font-weight:600;}
+.result{padding:16px 18px;border-radius:var(--r);font-size:14px;min-height:64px;line-height:1.7;}
+.r-empty{background:var(--sub);border:1px solid var(--border);color:var(--text3);}
+.r-ok{background:var(--success-light);border:1px solid #a7f3d0;}
+.r-title{font-weight:700;margin-bottom:4px;}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
+.chip{background:rgba(255,255,255,.7);border:1px solid var(--border);padding:3px 9px;border-radius:999px;font-size:12px;color:var(--text2);}
+.mask{position:fixed;inset:0;background:rgba(15,23,42,.45);display:none;align-items:center;justify-content:center;z-index:120;padding:16px;backdrop-filter:blur(5px);}
+.mask.show{display:flex;}
+#toastMask{z-index:500;}
+.modal{width:100%;max-width:560px;max-height:90vh;background:#fff;border-radius:var(--r-xl);box-shadow:var(--shadow-modal);display:flex;flex-direction:column;animation:pop .2s ease-out;}
+@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.97);}to{opacity:1;transform:none;}}
+.m-head{padding:18px 22px;border-bottom:1px solid var(--border);font-size:17px;font-weight:700;flex-shrink:0;background:linear-gradient(90deg,#f8fafc,#fff);border-radius:var(--r-xl) var(--r-xl) 0 0;display:flex;align-items:center;gap:8px;}
+.m-head::before{content:"";width:5px;height:18px;background:linear-gradient(180deg,var(--primary),#60a5fa);border-radius:3px;flex-shrink:0;}
+.m-body{padding:20px 22px;overflow:auto;flex:1;}
+.m-foot{padding:14px 22px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;background:var(--sub);border-radius:0 0 var(--r-xl) var(--r-xl);flex-shrink:0;flex-wrap:wrap;}
+.field{margin-bottom:16px;}
+.flab{display:block;font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;}
+.radio{background:var(--sub);border:1px solid var(--border);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:10px;}
+.radio label{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;}
+.radio.inline{flex-direction:row;flex-wrap:wrap;gap:6px 18px;}
+.cat-form{display:none;}
+.cat-form.show{display:block;}
+.sec-sub{font-size:14px;font-weight:700;color:var(--text2);margin:4px 0 10px;display:flex;align-items:center;gap:8px;}
+.sec-sub::before{content:"";width:4px;height:14px;background:var(--primary);border-radius:3px;}
+.tab{width:100%;border-collapse:collapse;background:#fff;table-layout:fixed;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.tab th{background:linear-gradient(180deg,var(--primary),var(--primary-dark));color:#fff;padding:11px 10px;text-align:left;font-size:14px;font-weight:600;}
+/* 默认4列（无复选框）：分类/名称/代码/备注 */
+.tab th:nth-child(1){width:18%;}
+.tab th:nth-child(2){width:28%;}
+.tab th:nth-child(3){width:22%;}
+.tab th:nth-child(4){width:auto;}
+/* 批量删除模式5列：复选框/分类/名称/代码/备注 */
+.tab.batch th:nth-child(1){width:36px;}
+.tab.batch th:nth-child(2){width:18%;}
+.tab.batch th:nth-child(3){width:28%;}
+.tab.batch th:nth-child(4){width:22%;}
+.tab.batch th:nth-child(5){width:auto;}
+.tab td{padding:11px 10px;font-size:13px;border-bottom:1px solid var(--border2);white-space:normal;word-break:break-word;overflow-wrap:break-word;vertical-align:top;}
+.tab tbody tr:nth-child(even){background:#fbfdff;}
+.tab tbody tr:hover{background:var(--primary-light);}
+.cat-h{font-size:15px;font-weight:700;color:var(--primary);margin:18px 0 8px;display:flex;align-items:center;gap:8px;}
+.cat-h::before{content:"";width:4px;height:16px;background:linear-gradient(180deg,var(--primary),#60a5fa);border-radius:3px;}
+.ov-body{display:flex;flex-direction:column;overflow:hidden;padding:0;}
+.ov-scroll{flex:1;overflow-y:auto;padding:14px 16px;background:var(--bg);}
+.sortbar{display:flex;flex-direction:column;gap:12px;background:linear-gradient(180deg,#fbfdff,#fff);border-bottom:1px solid var(--border);padding:16px;box-shadow:0 2px 6px rgba(15,23,42,.05);flex-shrink:0;}
+.ov-row{display:flex;align-items:center;gap:10px;flex-wrap:nowrap;}
+.ov-row .ov-label{font-size:13px;font-weight:700;color:var(--primary-dark);white-space:nowrap;flex-shrink:0;background:var(--primary-light);padding:4px 10px;border-radius:999px;}
+.ov-row .wrap{flex:1;min-width:0;display:inline-flex;}
+.ov-col{display:flex;flex-direction:column;align-items:stretch;gap:6px;width:100%;}
+.ov-hint{font-size:13px;font-weight:600;color:var(--text2);line-height:1.5;word-break:break-word;overflow-wrap:break-word;white-space:normal;}
+.sortbar input.dd{width:100%;font-size:14px;padding:10px 34px 10px 12px;border-radius:10px;}
+.sortbar .wrap .arrow{right:10px;}
+#sortBtn{flex-shrink:0;padding:10px 18px;font-size:13px;width:auto;min-width:72px;border-radius:10px;}
+.ov-search input{padding-right:76px;}
+.ov-search .arrow{right:12px;}
+.ov-search .ov-clear{right:42px;}
+.ov-clear{position:absolute;right:38px;top:50%;transform:translateY(-50%);width:20px;height:20px;display:none;align-items:center;justify-content:center;border-radius:50%;background:var(--border);color:var(--text2);font-size:12px;cursor:pointer;line-height:1;z-index:5;}
+.ov-clear:hover{background:#cbd5e1;color:#0f172a;}
+.empty{padding:32px 12px;text-align:center;color:var(--text3);background:var(--sub);border:1px dashed var(--border);border-radius:var(--r);}
+/* 数据概览统计 */
+.stats-grid{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px;}
+.stat-card{flex:1 1 calc(33.33% - 10px);min-width:104px;background:var(--sub);border:1px solid var(--border);border-radius:var(--r);padding:14px 12px;text-align:center;}
+.stat-card .num{font-size:24px;font-weight:800;color:var(--primary);line-height:1.2;}
+.stat-card .lbl{font-size:12px;color:var(--text3);margin-top:2px;}
+.cat-stats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
+.cat-chip{background:var(--primary-light);border:1px solid #bfdbfe;color:var(--primary-dark);padding:4px 11px;border-radius:999px;font-size:12px;}
+/* 产品总览批量删除 */
+.ov-batch{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px;border-top:1px solid var(--border);background:var(--primary-light);flex-shrink:0;flex-wrap:wrap;}
+.batch-tools{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;width:100%;}
+.ov-batch .tip{width:100%;font-size:12px;color:var(--primary-dark);opacity:.85;}
+.ov-batch .sel{font-size:13px;color:var(--text2);display:inline-flex;align-items:center;gap:6px;cursor:pointer;user-select:none;}
+.ov-batch .btn{flex-shrink:0;}
+.ov-chk{width:18px;height:18px;accent-color:var(--primary);cursor:pointer;vertical-align:middle;}
+.tab .chk-cell{width:42px;text-align:center;vertical-align:middle;}
+.file{display:none;}
+@media(max-width:640px){.header,.main{padding:18px 16px;}.m-head,.m-body,.m-foot{padding-left:16px;padding-right:16px;}input[type=text],input[type=search],textarea{font-size:16px;}.row3 .item{flex:0 1 calc(50% - 6px);}}
+
+/* ===== 页面间导航按钮 ===== */
+.tool-nav{display:flex;gap:10px;margin:0 auto 18px;max-width:720px;align-items:stretch;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:8px;box-shadow:0 1px 6px rgba(15,23,42,.05);}
+.tool-nav-home{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:0 16px;border-radius:9px;font-size:14px;font-weight:600;text-decoration:none;color:#475569;background:#f8fafc;border:1px solid #e2e8f0;white-space:nowrap;transition:background .15s,color .15s;}
+.tool-nav-home:hover{background:#eef2f7;color:#0f172a;}
+.tool-nav-home:active{transform:scale(.97);}
+.tool-nav-btn{flex:1;text-align:center;padding:12px 0;border-radius:9px;font-size:15px;font-weight:600;text-decoration:none;color:#475569;background:#f8fafc;border:1px solid #e2e8f0;transition:background .15s,color .15s,border-color .15s;}
+.tool-nav-btn.active{background:#1d4ed8;border-color:#1d4ed8;color:#ffffff;}
+.tool-nav-btn:active{transform:scale(.97);}
+
+
+</style>
+</head>
+<body>
+<div class="tool-nav"><a class="tool-nav-home" href="index.html"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path></svg>首页</a><a class="tool-nav-btn" href="算号.html">算号</a><a class="tool-nav-btn active" href="非预制卡.html">非预制</a></div>
+<div class="container">
+  <div class="header">
+    <div>
+      <h1>8103102 个人开非预制卡</h1>
+      <p>产品名称与代码双向查询 · 分类管理 · 导入导出</p>
+    </div>
+    <div class="badge" id="countBadge">产品库 0 条</div>
+  </div>
+  <div class="backtip">💡 <b>数据备份提醒：</b>产品数据保存在<b>本浏览器 localStorage</b> 中，清理浏览器缓存或换设备会丢失，请定期使用「导出产品」备份（推荐 Excel 或 CSV）。</div>
+  <div class="toolbar">
+    <div class="group-title">产品操作</div>
+    <div class="row row3">
+      <div class="item"><button class="btn b-p" id="btnAdd">➕ 新增产品</button></div>
+      <div class="item"><button class="btn b-g" id="btnEdit">✏️ 编辑产品</button></div>
+      <div class="item"><button class="btn b-d" id="btnDel">🗑️ 删除产品</button></div>
+    </div>
+    <div class="group-title">分类与数据</div>
+    <div class="row">
+      <div class="item"><button class="btn b-g" id="btnCatManage">📁 分类管理</button></div>
+      <div class="item"><button class="btn b-g" id="btnImport">📥 导入产品</button></div>
+      <div class="item"><button class="btn b-s" id="btnExport">💾 导出产品</button></div>
+      <div class="item"><button class="btn b-g" id="btnViewAll">📋 查看总览</button></div>
+    </div>
+    <input type="file" class="file" id="fileInput" accept=".json,.txt,.xlsx,.xls,.csv" />
+  </div>
+  <div class="main">
+    <div class="sec">数据概览</div>
+    <div class="stats-grid" id="statsGrid"></div>
+    <div class="cat-stats" id="catStats"></div>
+    <div class="sec">产品查询</div>
+    <div class="fi">
+      <label class="lab">选择分类</label>
+      <div class="wrap">
+        <input type="text" id="searchCatInput" class="dd" readonly value="全部" />
+        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        <div class="drop" id="searchCatDrop"></div>
+      </div>
+      <div class="hint">选择指定分类后，产品名称/代码仅在该分类内查询；选择“全部”则全库查询。</div>
+    </div>
+    <div class="fi">
+      <label class="lab">可售产品名称</label>
+      <div class="wrap">
+        <input type="search" id="inpName" placeholder="输入产品名称关键词" autocomplete="off" />
+        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        <div class="drop" id="dropName"></div>
+      </div>
+      <div class="hint">模糊搜索（已加防抖），下拉点选后自动回填。</div>
+    </div>
+    <div class="fi">
+      <label class="lab">可售产品代码</label>
+      <div class="wrap">
+        <input type="search" id="inpCode" placeholder="输入代码反查产品名称" autocomplete="off" />
+        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        <div class="drop" id="dropCode"></div>
+      </div>
+      <div class="hint">双向查询（已加防抖），输入代码片段检索对应产品。</div>
+    </div>
+    <div class="sec">查询结果</div>
+    <div class="result r-empty" id="resultBox"><div class="r-title">等待输入查询</div><div class="hint">请在上方选择分类并输入产品名称或产品代码。</div></div>
+  </div>
+</div>
+<!-- 通用确认弹窗 -->
+<div class="mask" id="toastMask">
+  <div class="modal" style="max-width:420px;">
+    <div class="m-head" id="toastHeader">提示</div>
+    <div class="m-body" id="toastBody">消息内容</div>
+    <div class="m-foot">
+      <button class="btn b-g btn-sm" id="toastCancel" style="display:none">取消</button>
+      <button class="btn b-p btn-sm" id="toastOk">确定</button>
+    </div>
+  </div>
+</div>
+<!-- 新增产品 -->
+<div class="mask" id="addModal">
+  <div class="modal">
+    <div class="m-head">新增产品</div>
+    <div class="m-body">
+      <div class="field"><label class="flab">产品分类</label>
+        <div class="wrap">
+          <input type="text" id="newCatInput" class="dd" readonly />
+          <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          <div class="drop" id="newCatDrop"></div>
+        </div>
+      </div>
+      <div class="field"><label class="flab">产品名称</label>
+        <input type="text" id="newName" class="plain" placeholder="请输入产品名称" />
+      </div>
+      <div class="field"><label class="flab">产品代码</label>
+        <input type="text" id="newCode" class="plain" placeholder="请输入产品代码" />
+      </div>
+      <div class="field"><label class="flab">备注（可选）</label><textarea id="newRemark" placeholder="填写产品备注信息"></textarea></div>
+    </div>
+    <div class="m-foot"><button class="btn b-g btn-sm" id="closeAdd">取消</button><button class="btn b-p btn-sm" id="saveAdd">保存新增</button></div>
+  </div>
+</div>
+<!-- 编辑产品 -->
+<div class="mask" id="editModal">
+  <div class="modal">
+    <div class="m-head">编辑产品</div>
+    <div class="m-body">
+      <div class="sec-sub">原产品（只读，点名称或代码右侧箭头选择要编辑的产品）</div>
+      <div class="field"><label class="flab">原产品分类（从库中选择，可先选"全部分类"）</label>
+        <div class="wrap">
+          <input type="text" id="editOldCatInput" class="dd" readonly />
+          <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          <div class="drop" id="editOldCatDrop"></div>
+        </div>
+      </div>
+      <div class="field"><label class="flab">原产品名称（只读，点右侧箭头选择）</label>
+        <div class="wrap">
+          <input type="text" id="editOldName" class="ro" readonly placeholder="点右侧箭头选择原产品" />
+          <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          <div class="drop" id="dropEditOldName"></div>
+        </div>
+      </div>
+      <div class="field"><label class="flab">原产品代码（只读，点右侧箭头选择）</label>
+        <div class="wrap">
+          <input type="text" id="editOldCode" class="ro" readonly placeholder="点右侧箭头选择原产品" />
+          <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          <div class="drop" id="dropEditOldCode"></div>
+        </div>
+      </div>
+      <div class="sec-sub">新产品信息（填写修改后的内容）</div>
+      <div class="field"><label class="flab">新的分类（从库中选择）</label>
+        <div class="wrap">
+          <input type="text" id="editNewCatInput" class="dd" readonly />
+          <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          <div class="drop" id="editNewCatDrop"></div>
+        </div>
+      </div>
+      <div class="field"><label class="flab">新的产品名称</label><input type="text" id="editNewName" class="plain" placeholder="请输入新产品名称" /></div>
+      <div class="field"><label class="flab">新的产品代码</label><input type="text" id="editNewCode" class="plain" placeholder="请输入新产品代码" /></div>
+      <div class="field"><label class="flab">备注（可直接编辑修改）</label><textarea id="editRemark" placeholder="可直接编辑修改产品备注信息"></textarea></div>
+      <input type="hidden" id="editIndex" />
+    </div>
+    <div class="m-foot"><button class="btn b-g btn-sm" id="closeEdit">取消</button><button class="btn b-p btn-sm" id="saveEdit">保存修改</button></div>
+  </div>
+</div>
+<!-- 删除产品 -->
+<div class="mask" id="delModal">
+  <div class="modal">
+    <div class="m-head">删除产品</div>
+    <div class="m-body">
+      <div class="field"><label class="flab">产品分类</label>
+        <div class="wrap">
+          <input type="text" id="delCatInput" class="dd" readonly />
+          <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          <div class="drop" id="delCatDrop"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="flab">产品名称</label>
+        <div class="wrap">
+          <input type="text" id="delName" placeholder="请输入产品名称" />
+          <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          <div class="drop" id="dropDelName"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="flab">产品代码</label>
+        <div class="wrap">
+          <input type="text" id="delCode" placeholder="请输入产品代码" />
+          <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          <div class="drop" id="dropDelCode"></div>
+        </div>
+      </div>
+    </div>
+    <div class="m-foot"><button class="btn b-g btn-sm" id="closeDel">取消</button><button class="btn b-d btn-sm" id="confirmDel">确认删除</button></div>
+  </div>
+</div>
+<!-- 产品总览 -->
+<div class="mask" id="overviewModal">
+  <div class="modal">
+    <div class="m-head">产品总览</div>
+    <div class="m-body ov-body">
+      <div class="sortbar">
+        <div class="ov-row">
+          <span class="ov-label">精准搜索</span>
+          <div class="wrap ov-search">
+            <input type="text" id="ovSearch" class="plain" placeholder="输入关键词（可空格分隔多词）" autocomplete="off" />
+            <span class="ov-clear" id="ovClear" title="清空搜索">✕</span>
+            <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            <div class="drop" id="ovSearchDrop"></div>
+          </div>
+        </div>
+        <div class="ov-row">
+          <span class="ov-label">排序字段</span>
+          <div class="wrap sort-wrap">
+            <input type="text" id="sortFieldInput" class="dd" readonly value="默认" />
+            <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            <div class="drop" id="sortFieldDrop"></div>
+          </div>
+          <button class="btn b-p btn-sm" id="sortBtn">升序</button>
+        </div>
+      </div>
+      <div class="ov-batch">
+        <button class="btn b-d btn-sm" id="btnBatchMode">批量删除</button>
+        <div class="batch-tools" id="batchTools" style="display:none">
+          <div class="tip">勾选表格左侧复选框可多选，再点「删除选中」批量删除</div>
+          <label class="sel"><input type="checkbox" id="ovSelectAll" /> 全选</label>
+          <span class="sel" id="ovSelCount">已选 0 条</span>
+          <button class="btn b-d btn-sm" id="btnBatchDel">删除选中</button>
+          <button class="btn b-g btn-sm" id="btnBatchCancel">取消</button>
+        </div>
+      </div>
+      <div class="ov-scroll">
+        <div id="overviewBody"></div>
+      </div>
+    </div>
+    <div class="m-foot"><button class="btn b-g btn-sm" id="closeOverview">关闭</button></div>
+  </div>
+</div>
+<!-- 分类管理（合并新增/重命名/清空删除） -->
+<div class="mask" id="catManageModal">
+  <div class="modal">
+    <div class="m-head">分类管理</div>
+    <div class="m-body">
+      <div class="field">
+        <label class="flab">操作类型</label>
+        <div class="radio inline">
+          <label><input type="radio" name="catOp" value="add" checked /> 新增分类</label>
+          <label><input type="radio" name="catOp" value="rename" /> 重命名分类</label>
+          <label><input type="radio" name="catOp" value="del" /> 清空/删除分类</label>
+        </div>
+      </div>
+      <div class="cat-form show" id="catAddForm">
+        <div class="sec-sub">新增分类</div>
+        <div class="field"><label class="flab">分类名称</label><input type="text" id="newCatName" placeholder="请输入新分类名称" /></div>
+      </div>
+      <div class="cat-form" id="catRenameForm">
+        <div class="sec-sub">重命名分类</div>
+        <div class="field"><label class="flab">选择原分类</label>
+          <div class="wrap">
+            <input type="text" id="oldCatInput" class="dd" readonly />
+            <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            <div class="drop" id="oldCatDrop"></div>
+          </div>
+        </div>
+        <div class="field"><label class="flab">新分类名称</label><input type="text" id="newCatRename" placeholder="请输入新分类名称" /></div>
+      </div>
+      <div class="cat-form" id="catDelForm">
+        <div class="sec-sub">清空或删除分类</div>
+        <div class="field"><label class="flab">选择分类</label>
+          <div class="wrap">
+            <input type="text" id="selDelCatInput" class="dd" readonly />
+            <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            <div class="drop" id="selDelCatDrop"></div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="flab">操作类型</label>
+          <div class="radio">
+            <label><input type="radio" name="catDelOp" value="clear" checked /> 清空该分类下所有产品（保留分类）</label>
+            <label><input type="radio" name="catDelOp" value="remove" /> 删除分类（连带删除该分类全部产品）</label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="m-foot"><button class="btn b-g btn-sm" id="closeCatManage">取消</button><button class="btn b-p btn-sm" id="saveCatManage">执行操作</button></div>
+  </div>
+</div>
+<!-- 导入产品（追加/覆盖 + 恢复默认） -->
+<div class="mask" id="importModal">
+  <div class="modal">
+    <div class="m-head">导入产品</div>
+    <div class="m-body">
+      <div class="field">
+        <label class="flab">导入模式</label>
+        <div class="radio inline">
+          <label><input type="radio" name="importMode" value="append" checked /> 追加导入（保留原有数据）</label>
+          <label><input type="radio" name="importMode" value="overwrite" /> 覆盖导入（清空后导入）</label>
+        </div>
+      </div>
+      <div class="field">
+        <label class="flab">选择文件</label>
+        <button class="btn b-p btn-sm" id="btnPickFile" style="width:100%">📂 选择文件导入（JSON / TXT / CSV / Excel）</button>
+        <div class="hint">导入会跳过「分类为空或未分类」的行，并提示对应行号；其余正常行正常导入。</div>
+      </div>
+      <div class="field">
+        <button class="btn b-g btn-sec btn-sm" id="btnTemplate" style="width:100%">📄 下载导入模板</button>
+        <div class="hint">下载标准 CSV 模板（含表头与示例行），按格式填好后可导入。</div>
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <button class="btn b-g btn-sec btn-sm" id="btnResetDefault" style="width:100%">🔄 恢复默认产品库</button>
+        <div class="hint">恢复出厂默认数据，自定义新增的产品将丢失，建议先导出备份。</div>
+      </div>
+    </div>
+    <div class="m-foot"><button class="btn b-g btn-sm" id="closeImport">关闭</button></div>
+  </div>
+</div>
+<!-- 导出产品（全库/搜索结果 + 格式） -->
+<div class="mask" id="exportModal">
+  <div class="modal">
+    <div class="m-head">导出产品</div>
+    <div class="m-body">
+      <div class="field">
+        <label class="flab">导出范围</label>
+        <div class="radio inline">
+          <label><input type="radio" name="expScope" value="all" checked /> 全部产品</label>
+          <label><input type="radio" name="expScope" value="search" id="expScopeSearch" /> 当前搜索结果</label>
+        </div>
+        <div class="hint" id="expScopeHint">未查询时只能导出全部产品。</div>
+      </div>
+      <div class="field">
+        <label class="flab">导出格式</label>
+        <div class="exp-btns">
+          <button class="btn b-g btn-sm" id="expJson">JSON</button>
+          <button class="btn b-g btn-sm" id="expTxt">TXT</button>
+          <button class="btn b-g btn-sm" id="expCsv">CSV</button>
+          <button class="btn b-p btn-sm" id="expXlsx">Excel</button>
+        </div>
+        <div class="hint">将导出分类、产品名称、产品代码、备注信息。</div>
+      </div>
+    </div>
+    <div class="m-foot"><button class="btn b-g btn-sm" id="closeExport">关闭</button></div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+// ===== 工具函数 =====
+function $(id){ return document.getElementById(id); }
+
+// ===================== 默认产品数据，按分类注释分组，方便维护 =====================
+var defaultData = [
+  /* ────────────────【中行生肖卡】· 共 4 条 ────────────────
+     产品清单（名称｜代码）：
+       兔年生肖借记卡｜102700001
+       龙年生肖借记卡｜102700002
+       蛇年生肖借记卡｜102700003
+       马年生肖借记卡｜102700004
+  */
+  {name:"兔年生肖借记卡",code:"102700001",category:"中行生肖卡",remark:""},
+  {name:"龙年生肖借记卡",code:"102700002",category:"中行生肖卡",remark:""},
+  {name:"蛇年生肖借记卡",code:"102700003",category:"中行生肖卡",remark:""},
+  {name:"马年生肖借记卡",code:"102700004",category:"中行生肖卡",remark:""},
+
+  /* ────────────────【中行联名卡】· 共 3 条 ────────────────
+     产品清单（名称｜代码）：
+       长城教师卡｜102700005
+       长城杏林卡｜102700006
+       长城志愿者联名卡｜102700007
+  */
+  {name:"长城教师卡",code:"102700005",category:"中行联名卡",remark:""},
+  {name:"长城杏林卡",code:"102700006",category:"中行联名卡",remark:""},
+  {name:"长城志愿者联名卡",code:"102700007",category:"中行联名卡",remark:""},
+
+  /* ────────────────【中行国际卡】· 共 2 条 ────────────────
+     产品清单（名称｜代码）：
+       跨境通借记卡｜102700008
+       粤港澳大湾区主题借记卡｜102700010
+  */
+  {name:"跨境通借记卡",code:"102700008",category:"中行国际卡",remark:""},
+  {name:"粤港澳大湾区主题借记卡",code:"102700010",category:"中行国际卡",remark:""},
+
+  /* ────────────────【中行财富管理卡】· 共 2 条 ────────────────
+     产品清单（名称｜代码）：
+       中银理财贵宾卡｜102700011
+       中银财富管理卡｜102700012
+  */
+  {name:"中银理财贵宾卡",code:"102700011",category:"中行财富管理卡",remark:""},
+  {name:"中银财富管理卡",code:"102700012",category:"中行财富管理卡",remark:""},
+
+  /* ────────────────【中行多币卡】· 共 3 条 ────────────────
+     产品清单（名称｜代码）：
+       621688借记卡｜101000002
+       621788借记卡｜102700002
+       多币种白金借记卡｜102700009
+  */
+  {name:"621688借记卡",code:"101000002",category:"中行多币卡",remark:""},
+  {name:"621788借记卡",code:"102700002",category:"中行多币卡",remark:""},
+  {name:"多币种白金借记卡",code:"102700009",category:"中行多币卡",remark:""},
+
+  /* ────────────────【中行贵宾卡】· 共 2 条 ────────────────
+     产品清单（名称｜代码）：
+       中银私人银行卡｜102700013
+       长城白金贵宾借记卡｜102700014
+  */
+  {name:"中银私人银行卡",code:"102700013",category:"中行贵宾卡",remark:""},
+  {name:"长城白金贵宾借记卡",code:"102700014",category:"中行贵宾卡",remark:""},
+
+  /* ────────────────【中行单位结算卡】· 共 2 条 ────────────────
+     产品清单（名称｜代码）：
+       单位结算卡普卡｜102700015
+       单位结算卡金卡｜102700016
+  */
+  {name:"单位结算卡普卡",code:"102700015",category:"中行单位结算卡",remark:""},
+  {name:"单位结算卡金卡",code:"102700016",category:"中行单位结算卡",remark:""}
+];
+var DEFAULT_CATS = ["中行生肖卡","中行联名卡","中行国际卡","中行财富管理卡","中行多币卡","中行贵宾卡","中行单位结算卡"];
+
+var productDB = [];
+var categoryList = DEFAULT_CATS.slice();
+var currentSearchResult = [];
+var sortState = {field:"default", order:"asc"};
+var overviewKw = "";
+var toastConfirm = null;
+var ovSelected = new Set(); // 总览批量删除：已勾选的产品 key（name|code|category）
+var batchMode=false; // 总览批量删除模式：false 不显示复选框列，true 显示
+
+/** 产品唯一 key（总览复选框用） */
+function keyOf(it){ return encodeURIComponent(it.name)+"|"+encodeURIComponent(it.code)+"|"+encodeURIComponent(it.category); }
+
+/** 关键词匹配（分类/名称/代码，支持空格分隔多词）——查询与总览共用 */
+function matchKw(p, kws){
+  return kws.every(function(k){ return (p.category||"").toLowerCase().indexOf(k)>=0 || (p.name||"").toLowerCase().indexOf(k)>=0 || (p.code||"").indexOf(k)>=0; });
+}
+
+/** 数据概览统计渲染 */
+function updateStats(){
+  var g=$("statsGrid"), c=$("catStats");
+  if(g){
+    var total=productDB.length, catN=categoryList.length;
+    var withProd=categoryList.filter(function(x){ return productDB.some(function(i){return i.category===x;}); }).length;
+    g.innerHTML=
+      '<div class="stat-card"><div class="num">'+total+'</div><div class="lbl">产品总数</div></div>'+
+      '<div class="stat-card"><div class="num">'+catN+'</div><div class="lbl">分类总数</div></div>'+
+      '<div class="stat-card"><div class="num">'+withProd+'</div><div class="lbl">有产品分类</div></div>';
+  }
+  if(c){
+    var chips="";
+    categoryList.forEach(function(x){
+      var n=productDB.filter(function(i){return i.category===x;}).length;
+      chips+='<span class="cat-chip">'+x+' · '+n+'</span>';
+    });
+    c.innerHTML=chips;
+  }
+}
+
+/** 新增/导入同名或同码软提醒文案（不阻止保存） */
+function dupHint(name,code){
+  var sameName=productDB.some(function(p){ return p.name===name && p.code!==code; });
+  var sameCode=productDB.some(function(p){ return p.code===code && p.name!==name; });
+  if(sameName&&sameCode) return "提示：库中已存在同名不同码和同码不同名产品";
+  if(sameName) return "提示：该名称已存在其他代码";
+  if(sameCode) return "提示：该代码已存在其他名称";
+  return "";
+}
+
+/** 批量删除模式 UI 切换：平时只显示「批量删除」按钮；模式开启后显示复选框栏 */
+function setBatchUI(){
+  var m=$("btnBatchMode"), t=$("batchTools");
+  if(m) m.style.display=batchMode?"none":"";
+  if(t) t.style.display=batchMode?"flex":"none";
+}
+
+/** 更新总览"已选 N 条"与全选状态 */
+function updateOvSel(){
+  var count=$("ovSelCount"); if(count) count.textContent="已选 "+ovSelected.size+" 条";
+  var all=$("ovSelectAll"); if(all){
+    var rows=document.querySelectorAll("#overviewBody .ov-chk").length;
+    if(rows>0){ all.checked=ovSelected.size===rows; all.indeterminate=ovSelected.size>0&&ovSelected.size<rows; }
+    else{ all.checked=false; all.indeterminate=false; }
+  }
+}
+
+/** 标准化产品对象 */
+function normalize(p){
+  if(!p||typeof p!=="object") p={};
+  return {name:(p.name==null?"":String(p.name)).trim(),code:(p.code==null?"":String(p.code)).trim(),category:(p.category==null?"":String(p.category)).trim(),remark:(p.remark==null?"":String(p.remark)).trim()};
+}
+
+/** 防抖 */
+function debounce(fn,ms){
+  var t=null;
+  return function(){ var args=arguments; clearTimeout(t); t=setTimeout(()=>fn.apply(this,args),ms); };
+}
+
+/** 弹窗开关（统一入口） */
+function openModal(id){ $(id).classList.add("show"); }
+function closeModal(id){ $(id).classList.remove("show"); }
+
+/** 关闭全部下拉 */
+function closeAllDrop(){ document.querySelectorAll(".drop.show").forEach(d=>d.classList.remove("show")); }
+
+/** 公共箭头绑定：mousedown 阻止文字全选；click 展开/收起（只点箭头才有效） */
+function bindArrowToggle(arrow, drop, onExpand){
+  if(!arrow||!drop) return;
+  arrow.addEventListener("mousedown",function(e){ e.preventDefault(); e.stopPropagation(); });
+  arrow.addEventListener("click",function(e){
+    e.stopPropagation();
+    if(drop.classList.contains("show")){ drop.classList.remove("show"); return; }
+    if(onExpand) onExpand();
+    drop.classList.add("show");
+  });
+}
+
+/** Toast 提示弹窗 */
+function toast(opts){
+  opts=opts||{};
+  $("toastHeader").textContent=opts.title||"提示";
+  $("toastBody").textContent=opts.message||"";
+  $("toastCancel").style.display=(opts.showCancel?"inline-flex":"none");
+  toastConfirm=opts.onConfirm||null;
+  $("toastMask").classList.add("show");
+}
+$("toastOk").onclick=function(){ $("toastMask").classList.remove("show"); if(toastConfirm) toastConfirm(); toastConfirm=null; };
+$("toastCancel").onclick=function(){ $("toastMask").classList.remove("show"); toastConfirm=null; };
+
+/** 本地存储加载 */
+function load(){
+  try{
+    var db=localStorage.getItem("cardProductDb");
+    var ct=localStorage.getItem("cardCategoryList");
+    if(ct){ var a=JSON.parse(ct); if(Array.isArray(a)&&a.length) categoryList=a.filter(function(c){return c!=="未分类";}); }
+    if(db){ var r=JSON.parse(db); if(Array.isArray(r)){ productDB=r.map(normalize).filter(function(i){return i.category&&i.category!=="未分类";}); } else { productDB=defaultData.map(normalize); } }
+    else { productDB=defaultData.map(normalize); }
+  }catch(e){ productDB=defaultData.map(normalize); categoryList=DEFAULT_CATS.slice(); }
+}
+
+/** 本地存储保存 */
+function save(){
+  productDB.forEach(function(i){ if(i.category&&categoryList.indexOf(i.category)<0) categoryList.push(i.category); });
+  try{
+    localStorage.setItem("cardProductDb",JSON.stringify(productDB));
+    localStorage.setItem("cardCategoryList",JSON.stringify(categoryList));
+  }catch(e){ toast({title:"警告",message:"浏览器存储不可用，数据无法保存！请检查浏览器设置。"}); }
+  updateCount();
+  updateExportBtn();
+}
+
+function updateCount(){ var el=$("countBadge"); if(el) el.textContent="产品库 "+productDB.length+" 条"; updateStats(); }
+/** 根据是否有搜索结果，更新导出弹窗的"当前搜索结果"选项可用性 */
+function updateExportBtn(){
+  var has=currentSearchResult&&currentSearchResult.length;
+  var r=$("expScopeSearch");
+  if(r) r.disabled=!has;
+  var hint=$("expScopeHint");
+  if(hint) hint.textContent=has?("可导出当前搜索到的 "+currentSearchResult.length+" 条产品。"):"未查询时只能导出全部产品。";
+  var checked=document.querySelector('input[name="expScope"]:checked');
+  if(checked&&checked.value==="search"&&!has){ var all=document.querySelector('input[name="expScope"][value="all"]'); if(all) all.checked=true; }
+}
+
+// 弹窗点击蒙层关闭
+var modals=["addModal","editModal","delModal","overviewModal","exportModal","importModal","catManageModal"];
+modals.forEach(function(id){
+  var m=$(id);
+  if(m){ m.addEventListener("click",function(e){ if(e.target===m) m.classList.remove("show"); }); }
+});
+
+// ====================== 分类只读下拉组件 ======================
+var dropdowns = {};
+function catOpts(withAll){ var opts=categoryList.map(function(c){return {value:c,label:c};}); if(withAll) opts.unshift({value:"全部",label:"全部"}); return opts; }
+function refreshCatDropdowns(){
+  if(dropdowns.search) dropdowns.search.refreshOptions(catOpts(true), true);
+  ["new","editNew","del","old","selDel"].forEach(function(k){ if(dropdowns[k]) dropdowns[k].refreshOptions(catOpts(false), true); });
+  if(dropdowns.editOldCat) dropdowns.editOldCat.refreshOptions([{value:"全部分类",label:"全部分类"}].concat(catOpts(false)), true);
+}
+
+/** 创建只读下拉组件（分类选择） */
+function createDropdown(name, inputId, dropId, options, onChange){
+  var inp=$(inputId), drop=$(dropId);
+  if(!inp||!drop) return null;
+  var wrap=inp.parentNode;
+  var arrow=wrap.querySelector(".arrow");
+  var cur={value:null,label:null};
+  function render(){
+    drop.innerHTML="";
+    options.forEach(function(o){
+      var d=document.createElement("div");
+      d.className="ditem";
+      d.textContent=o.label;
+      d.onclick=function(e){ e.stopPropagation(); cur=o; inp.value=o.label; drop.classList.remove("show"); if(onChange) onChange(o.value,o.label); };
+      drop.appendChild(d);
+    });
+  }
+  if(arrow) bindArrowToggle(arrow, drop, render);
+  document.addEventListener("click",function(e){ if(!wrap.contains(e.target)) drop.classList.remove("show"); });
+  var api={
+    setValue:function(v){ var found=options.find(function(o){return o.value===v;}); if(found){ cur=found; inp.value=found.label; } else { cur={value:v,label:v}; inp.value=v; } },
+    getValue:function(){ return cur.value; },
+    refreshOptions:function(newOpts,keepValue){ options=newOpts; if(keepValue&&cur.value!=null){ var found=options.find(function(o){return o.value===cur.value;}); if(found){ cur=found; inp.value=found.label; } } }
+  };
+  dropdowns[name]=api;
+  return api;
+}
+
+/** 渲染产品下拉列表 */
+function showItemDrop(dropDom,itemList,onPick){
+  dropDom.innerHTML="";
+  if(!itemList.length){ dropDom.classList.remove("show"); return; }
+  itemList.forEach(function(it){
+    var d=document.createElement("div");
+    d.className="ditem";
+    d.innerHTML="<span>"+it.name+"</span><span class=\"code\">"+it.code+"</span>";
+    d.onclick=function(){ onPick(it); dropDom.classList.remove("show"); };
+    dropDom.appendChild(d);
+  });
+  dropDom.classList.add("show");
+}
+
+/** 绑定产品搜索下拉箭头（主页名称/代码输入框） */
+function bindItemDropdown(wrapId,getData,onPick){
+  var wrap=$(wrapId).parentNode, arrow=wrap.querySelector(".arrow"), drop=wrap.querySelector(".drop");
+  if(!arrow||!drop) return;
+  bindArrowToggle(arrow, drop, function(){ var list=getData(); showItemDrop(drop,list,onPick); });
+}
+
+function setResult(cls,title,lines){
+  var r=$("resultBox");
+  r.className="result "+cls;
+  var h="<div class=\"r-title\">"+title+"</div>";
+  if(lines&&lines.length){ h+="<div class=\"chips\">"; lines.forEach(function(l){h+="<span class=\"chip\">"+l+"</span>";}); h+="</div>"; }
+  r.innerHTML=h;
+}
+function fillResult(it){
+  $("inpName").value=it.name;
+  $("inpCode").value=it.code;
+  setResult("r-ok","已匹配产品",["分类："+it.category,"产品名称："+it.name,"产品代码："+it.code,"备注："+(it.remark||"无")]);
+  currentSearchResult=[it];
+  updateExportBtn();
+}
+function curCate(){ return dropdowns.search.getValue()||"全部"; }
+function searchPool(){ var c=curCate(); return c==="全部"?productDB.slice():productDB.filter(function(i){return i.category===c;}); }
+
+bindItemDropdown("inpName",searchPool,fillResult);
+bindItemDropdown("inpCode",searchPool,function(it){ fillResult(it); });
+
+/** 绑定编辑/删除弹窗内 名称+代码 输入框：箭头展开当前分类、输入防抖搜索；点选统一回填名称与代码 */
+function bindModalItemSearch(nameInpId, codeInpId, catDDName){
+  var nameInp=$(nameInpId), codeInp=$(codeInpId);
+  if(!nameInp||!codeInp) return;
+  var nameDrop=nameInp.parentNode.querySelector(".drop");
+  var codeDrop=codeInp.parentNode.querySelector(".drop");
+  var nameArrow=nameInp.parentNode.querySelector(".arrow");
+  var codeArrow=codeInp.parentNode.querySelector(".arrow");
+  // 取当前分类下的产品列表（点箭头时展示）
+  function catList(){ var c=dropdowns[catDDName].getValue(); return productDB.filter(function(i){ return i.category===c; }); }
+  // 点选后统一回填：名称框+代码框+分类；编辑弹窗再回填备注并记录 index
+  function pick(it){
+    nameInp.value=it.name;
+    codeInp.value=it.code;
+    dropdowns[catDDName].setValue(it.category);
+    var re=$("editRemark"); if(re) re.value=it.remark||"";
+    var e=$("editIndex"); if(e) e.value=productDB.indexOf(it);
+  }
+  // 名称框：按名称过滤
+  if(nameArrow) bindArrowToggle(nameArrow, nameDrop, function(){ showItemDrop(nameDrop,catList(),pick); });
+  nameInp.addEventListener("input",debounce(function(){
+    var kw=nameInp.value.trim().toLowerCase();
+    var c=dropdowns[catDDName].getValue();
+    var list=kw?productDB.filter(function(i){ return i.category===c && i.name.toLowerCase().indexOf(kw)>=0; }):[];
+    showItemDrop(nameDrop,list,pick);
+  },200));
+  // 代码框：按代码过滤
+  if(codeArrow) bindArrowToggle(codeArrow, codeDrop, function(){ showItemDrop(codeDrop,catList(),pick); });
+  codeInp.addEventListener("input",debounce(function(){
+    var kw=codeInp.value.trim().toLowerCase();
+    var c=dropdowns[catDDName].getValue();
+    var list=kw?productDB.filter(function(i){ return i.category===c && i.code.indexOf(kw)>=0; }):[];
+    showItemDrop(codeDrop,list,pick);
+  },200));
+}
+
+/** 绑定编辑弹窗"原产品"名称/代码选择箭头：只读框，点箭头按当前原产品分类过滤列表；选中回填并初始化新产品区 */
+function bindEditOldPicker(inpId, dropId){
+  var inp=$(inpId), drop=$(dropId);
+  if(!inp||!drop) return;
+  var arrow=inp.parentNode.querySelector(".arrow");
+  if(!arrow) return;
+  // 取"原产品分类"下拉当前值；"全部分类/全部"表示全库
+  function catFilteredList(){
+    var c=dropdowns.editOldCat?dropdowns.editOldCat.getValue():null;
+    return (!c||c==="全部分类"||c==="全部") ? productDB.slice() : productDB.filter(function(i){ return i.category===c; });
+  }
+  bindArrowToggle(arrow, drop, function(){
+    showItemDrop(drop, catFilteredList(), function(it){
+      if(dropdowns.editOldCat) dropdowns.editOldCat.setValue(it.category);
+      $("editOldName").value=it.name;
+      $("editOldCode").value=it.code;
+      dropdowns.editNew.setValue(it.category);
+      $("editNewName").value=it.name;
+      $("editNewCode").value=it.code;
+      $("editRemark").value=it.remark||"";
+      $("editIndex").value=productDB.indexOf(it);
+    });
+  });
+}
+
+// 全局空白点击关闭搜索下拉
+document.addEventListener("click",function(e){
+  [["inpName","dropName"],["inpCode","dropCode"],["editOldName","dropEditOldName"],["editOldCode","dropEditOldCode"],["delName","dropDelName"],["delCode","dropDelCode"],["ovSearch","ovSearchDrop"]].forEach(function(p){
+    var inp=$(p[0]), drop=$(p[1]);
+    if(inp&&drop&&!inp.parentNode.contains(e.target)) drop.classList.remove("show");
+  });
+});
+
+// ====================== 产品总览渲染 ======================
+function renderOverview(){
+  var body=$("overviewBody");
+  var kw=overviewKw.trim().toLowerCase();
+  var pool=productDB;
+  if(kw){
+    var kws=kw.split(/\s+/).filter(Boolean);
+    pool=productDB.filter(function(i){
+      return matchKw(i,kws);
+    });
+  }
+  if(!pool.length){ body.innerHTML=kw?'<div class="empty">未找到匹配「'+overviewKw.trim()+'」的产品，可尝试空格分隔多个关键词</div>':'<div class="empty">产品库暂无数据</div>'; updateOvSel(); return; }
+  // 清理已不在当前结果中的勾选项
+  var validKeys=new Set(pool.map(keyOf));
+  ovSelected.forEach(function(k){ if(!validKeys.has(k)) ovSelected.delete(k); });
+  var groupOrder=[], group={};
+  pool.forEach(function(i){ if(!group[i.category]){ group[i.category]=[]; groupOrder.push(i.category); } group[i.category].push(i); });
+  var catKeys;
+  if(sortState.field==="default"){ catKeys=categoryList.filter(function(c){return group[c];}); groupOrder.forEach(function(c){ if(catKeys.indexOf(c)<0) catKeys.push(c); }); if(sortState.order==="desc") catKeys.reverse(); }
+  else { catKeys=Object.keys(group).sort(function(a,b){ return sortState.order==="asc"?a.localeCompare(b):b.localeCompare(a); }); }
+  var html="";
+  catKeys.forEach(function(catKey){
+    var list=group[catKey].slice();
+    if(sortState.field!=="default"){
+      list.sort(function(a,b){ var av=(a[sortState.field]||"").toString().toLowerCase(); var bv=(b[sortState.field]||"").toString().toLowerCase(); return sortState.order==="asc"?av.localeCompare(bv):bv.localeCompare(av); });
+    }else if(sortState.order==="desc"){
+      list.reverse();
+    }
+    html+="<div class=\"cat-h\">"+catKey+"</div>";
+    html+="<table class=\"tab"+(batchMode?" batch":"")+"\"><thead><tr>"+(batchMode?"<th class=\"chk-cell\"></th>":"")+"<th>分类</th><th>产品名称</th><th>产品代码</th><th>备注</th></tr></thead><tbody>";
+    list.forEach(function(r){ var k=keyOf(r); html+="<tr>"+(batchMode?"<td class=\"chk-cell\"><input type=\"checkbox\" class=\"ov-chk\" data-key=\""+k+"\" "+(ovSelected.has(k)?'checked':'')+"></td>":"")+"<td>"+r.category+"</td><td>"+r.name+"</td><td>"+r.code+"</td><td>"+(r.remark||"")+"</td></tr>"; });
+    html+="</tbody></table>";
+  });
+  body.innerHTML=html;
+  updateOvSel();
+}
+
+/** 总览搜索下拉：输入关键词后在输入框下方弹出匹配产品列表，点选精准定位 */
+function showOvSearchDrop(){
+  var drop=$("ovSearchDrop");
+  if(!drop) return;
+  var kw=$("ovSearch").value.trim().toLowerCase();
+  if(!kw){ drop.innerHTML=""; drop.classList.remove("show"); return; }
+  var kws=kw.split(/\s+/).filter(Boolean);
+  var list=productDB.filter(function(i){
+    return matchKw(i,kws);
+  });
+  if(!list.length){ drop.innerHTML=""; drop.classList.remove("show"); return; }
+  showItemDrop(drop, list, function(it){
+    $("ovSearch").value=it.name;
+    overviewKw=it.name;
+    $("ovClear").style.display="flex";
+    drop.classList.remove("show");
+    renderOverview();
+  });
+}
+
+/** 总览搜索右侧箭头展开：无输入显示全部产品；有输入按关键词过滤；点选精准定位 */
+function ovExpandDrop(){
+  var drop=$("ovSearchDrop");
+  if(!drop) return;
+  var kw=$("ovSearch").value.trim().toLowerCase();
+  var list;
+  if(!kw){ list=productDB.slice(); }
+  else{
+    var kws=kw.split(/\s+/).filter(Boolean);
+    list=productDB.filter(function(i){
+      return matchKw(i,kws);
+    });
+  }
+  if(!list.length){ drop.innerHTML=""; drop.classList.remove("show"); return; }
+  showItemDrop(drop, list, function(it){
+    $("ovSearch").value=it.name;
+    overviewKw=it.name;
+    $("ovClear").style.display="flex";
+    drop.classList.remove("show");
+    renderOverview();
+  });
+}
+
+// ====================== 导出工具 ======================
+function download(blob,name){ var u=URL.createObjectURL(blob); var a=document.createElement("a"); a.href=u; a.download=name; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(u); }
+function buildSheet(data){
+  var reorderData=data.map(function(item){ return {"分类":item.category,"产品名称":item.name,"产品代码":item.code,"备注":item.remark}; });
+  var ws=XLSX.utils.json_to_sheet(reorderData);
+  if(data.length) ws["!cols"]=[{wch:16},{wch:22},{wch:12},{wch:30}];
+  return ws;
+}
+/** 按导出范围取数据（全部产品 / 当前搜索结果） */
+function exportCurrentData(){
+  var scope=document.querySelector('input[name="expScope"]:checked').value;
+  var data=scope==="search"?currentSearchResult:productDB;
+  return data&&data.length?data:null;
+}
+
+// ====================== 文件导入解析 ======================
+function headKey(h){ if(h==null) return ""; h=String(h).trim().toLowerCase(); var m={"分类":"category","类别":"category","产品分类":"category","category":"category","名称":"name","产品名称":"name","品名":"name","name":"name","代码":"code","产品代码":"code","卡号":"code","code":"code","备注":"remark","remark":"remark","说明":"remark"}; return m[h]||h; }
+function parseRows(rows){
+  if(!Array.isArray(rows)||!rows.length) return [];
+  var known=["category","name","code","remark"];
+  var fk=(rows[0]||[]).map(headKey);
+  var hasHeader=fk.some(function(k){return known.indexOf(k)>=0;});
+  var start=hasHeader?1:0;
+  var keys=hasHeader?fk.map(function(k){return known.indexOf(k)>=0?k:null;}):["category","name","code","remark"];
+  var out=[];
+  for(var i=start;i<rows.length;i++){
+    var r=rows[i]||[];
+    if(!r.length) continue;
+    var empty=true;
+    r.forEach(function(c){ if(c!=null&&String(c).trim()!=="") empty=false; });
+    if(empty) continue;
+    var obj={};
+    keys.forEach(function(k,ci){ if(k) obj[k]=r[ci]; });
+    obj.__row=i+1;
+    out.push(obj);
+  }
+  return out;
+}
+async function readFile(f){
+  var name=f.name.toLowerCase();
+  var buf=await f.arrayBuffer();
+  if(name.endsWith(".json")){ var d=JSON.parse(await f.text()); return Array.isArray(d)?d:(d&&(d.data||d.products||d.list))||[]; }
+  if(name.endsWith(".txt")){
+    var out=[];
+    (await f.text()).split(/\r?\n/).forEach(function(line){ var m=line.match(/(.+?)｜(.+?)｜(.+?)(?:｜(.*))?$/); if(m) out.push({category:m[1].trim(),name:m[2].trim(),code:m[3].trim(),remark:(m[4]||"").trim()}); });
+    return out;
+  }
+  if(name.endsWith(".xlsx")||name.endsWith(".xls")||name.endsWith(".csv")){
+    if(typeof XLSX==="undefined") throw new Error("Excel库未加载");
+    var wb=XLSX.read(buf,{type:"array"});
+    var ws=wb.Sheets[wb.SheetNames[0]];
+    var rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:""});
+    return parseRows(rows);
+  }
+  throw new Error("不支持的文件类型");
+}
+function filterImport(raw){
+  var valid=[], skipped=[];
+  raw.forEach(function(p){ var c=(p.category==null?"":String(p.category)).trim(); if(!c||c==="未分类"){ skipped.push(p.__row||0); return; } valid.push(normalize(p)); });
+  return {valid:valid, skipped:skipped};
+}
+function skippedMsg(sk){
+  if(!sk||!sk.length) return "";
+  var uniq=[...new Set(sk)].map(function(v){ return v?v:"(未知行)";});
+  return "（另跳过 "+uniq.length+" 行分类为空或为未分类，不支持导入，行号："+uniq.join("、")+"）";
+}
+function runImport(raw,isOverwrite){
+  var f=filterImport(raw);
+  if(!f.valid.length) return toast({title:"提示",message:"未读取到可导入产品"+skippedMsg(f.skipped)});
+  var before=productDB.length;
+  if(isOverwrite){
+    toast({ title:"确认覆盖导入", message:"将覆盖当前产品库，导入 "+f.valid.length+" 条"+skippedMsg(f.skipped)+"。建议先导出备份，是否继续？", showCancel:true, onConfirm:function(){
+      productDB=f.valid;
+      categoryList=DEFAULT_CATS.slice();
+      f.valid.forEach(function(i){ if(i.category&&categoryList.indexOf(i.category)<0) categoryList.push(i.category); });
+      save(); refreshCatDropdowns();
+      toast({title:"成功",message:"覆盖导入完成，共 "+productDB.length+" 条"+skippedMsg(f.skipped)});
+    }});
+  }else{
+    productDB=productDB.concat(f.valid);
+    save(); refreshCatDropdowns();
+    var conflict=0;
+    f.valid.forEach(function(v){
+      var sameName=productDB.some(function(p){ return p.name===v.name && p.code!==v.code; });
+      var sameCode=productDB.some(function(p){ return p.code===v.code && p.name!==v.name; });
+      if(sameName||sameCode) conflict++;
+    });
+    toast({title:"成功",message:"批量导入完成，新增 "+(productDB.length-before)+" 条产品"+skippedMsg(f.skipped)+(conflict?("（提示："+conflict+" 条与库中产品存在同名/同码关系，已保留）"):"")});
+  }
+}
+
+// ====================== 分类管理（新增/重命名/清空删除） ======================
+/** 切换分类管理的操作表单 */
+function setCatForm(t){
+  $("catAddForm").className="cat-form"+(t==="add"?" show":"");
+  $("catRenameForm").className="cat-form"+(t==="rename"?" show":"");
+  $("catDelForm").className="cat-form"+(t==="del"?" show":"");
+}
+/** 新增分类 */
+function doAddCat(){
+  var n=$("newCatName").value.trim();
+  if(!n) return toast({title:"提示",message:"分类名称不能为空"});
+  if(n==="未分类") return toast({title:"提示",message:"不支持创建【未分类】分类"});
+  if(categoryList.indexOf(n)>=0) return toast({title:"提示",message:"该分类名称已存在"});
+  categoryList.push(n); save(); refreshCatDropdowns();
+  toast({title:"成功",message:"分类【"+n+"】创建完成"});
+}
+/** 重命名分类 */
+function doRenameCat(){
+  var old=dropdowns.old.getValue();
+  var n=$("newCatRename").value.trim();
+  if(!n) return toast({title:"提示",message:"新分类名称不能为空"});
+  if(old===n) return toast({title:"提示",message:"新名称不能与原名称相同"});
+  if(n==="未分类") return toast({title:"提示",message:"不支持命名为【未分类】"});
+  if(categoryList.indexOf(n)>=0) return toast({title:"提示",message:"该分类名称已存在"});
+  toast({ title:"确认重命名", message:"将分类【"+old+"】重命名为【"+n+"】，并同步更新所有产品？", showCancel:true, onConfirm:function(){
+    productDB.forEach(function(i){ if(i.category===old) i.category=n; });
+    var oi=categoryList.indexOf(old); if(oi>-1) categoryList[oi]=n;
+    save(); refreshCatDropdowns();
+    toast({title:"完成",message:"分类已重命名"});
+  }});
+}
+/** 清空或删除分类 */
+function doDelCat(){
+  var c=dropdowns.selDel.getValue();
+  var op=document.querySelector('input[name="catDelOp"]:checked').value;
+  toast({ title:"确认操作", message:op==="clear"?"清空分类【"+c+"】下所有产品？分类将保留。":"删除分类【"+c+"】及其全部产品？此操作不可恢复。", showCancel:true, onConfirm:function(){
+    productDB=productDB.filter(function(i){ return i.category!==c; });
+    if(op==="remove") categoryList=categoryList.filter(function(x){ return x!==c; });
+    save(); refreshCatDropdowns();
+    toast({title:"完成",message:"操作已完成"});
+  }});
+}
+
+// ====================== 按钮事件绑定 ======================
+function bindAllButtons(){
+  // ---- 新增产品 ----
+  $("btnAdd").onclick=function(){ $("newName").value="";$("newCode").value="";$("newRemark").value="";refreshCatDropdowns();dropdowns.new.setValue(categoryList[0]);openModal("addModal"); };
+  $("closeAdd").onclick=function(){ closeModal("addModal"); };
+  $("saveAdd").onclick=function(){
+    var name=$("newName").value.trim(), code=$("newCode").value.trim(), cat=dropdowns.new.getValue(), remark=$("newRemark").value.trim();
+    if(!name||!code) return toast({title:"提示",message:"产品名称与代码不能为空"});
+    if(!cat) return toast({title:"提示",message:"请选择产品分类"});
+    if(productDB.some(function(p){return p.code===code&&p.name===name;})) return toast({title:"提示",message:"该产品（名称+代码）已存在"});
+    productDB.push(normalize({name:name,code:code,category:cat,remark:remark})); save(); closeModal("addModal");
+    var dh=dupHint(name,code);
+    toast({title:"成功",message:"新增保存成功"+(dh?"（"+dh+"）":"")});
+  };
+
+  // ---- 编辑产品 ----
+  $("btnEdit").onclick=function(){
+    dropdowns.editOldCat.setValue("全部分类");
+    $("editOldName").value="";$("editOldCode").value="";
+    $("editNewName").value="";$("editNewCode").value="";$("editRemark").value="";$("editIndex").value="";
+    refreshCatDropdowns(); dropdowns.editNew.setValue(categoryList[0]); openModal("editModal");
+  };
+  $("closeEdit").onclick=function(){ closeModal("editModal"); };
+  $("saveEdit").onclick=function(){
+    var idx=Number($("editIndex").value), name=$("editNewName").value.trim(), code=$("editNewCode").value.trim(), cat=dropdowns.editNew.getValue(), remark=$("editRemark").value.trim();
+    if(!name||!code) return toast({title:"提示",message:"新产品名称和代码不能为空"});
+    if(isNaN(idx)||idx<0) return toast({title:"提示",message:"请先点上方原产品名称/代码的箭头，选择要编辑的产品"});
+    if(productDB.some(function(p,i){ return i!==idx&&p.code===code&&p.name===name; })) return toast({title:"提示",message:"该产品已存在，不可重复"});
+    productDB[idx]=normalize({name:name,code:code,category:cat,remark:remark}); save(); closeModal("editModal");
+    toast({title:"成功",message:"修改保存成功"});
+  };
+
+  // ---- 删除产品 ----
+  $("btnDel").onclick=function(){ $("delName").value="";$("delCode").value="";refreshCatDropdowns();dropdowns.del.setValue(categoryList[0]);openModal("delModal"); };
+  $("closeDel").onclick=function(){ closeModal("delModal"); };
+  $("confirmDel").onclick=function(){
+    var name=$("delName").value.trim(), code=$("delCode").value.trim(), cat=dropdowns.del.getValue();
+    var idx=productDB.findIndex(function(i){return i.name===name&&i.code===code&&i.category===cat;});
+    if(idx<0) return toast({title:"提示",message:"未找到匹配产品，请重新选择"});
+    toast({ title:"确认删除", message:"确认删除产品：【"+productDB[idx].name+"｜"+productDB[idx].code+"】（分类："+productDB[idx].category+"）？", showCancel:true, onConfirm:function(){ productDB.splice(idx,1); save(); closeModal("delModal"); toast({title:"成功",message:"已删除该产品"}); } });
+  };
+
+  // ---- 分类管理 ----
+  $("btnCatManage").onclick=function(){ refreshCatDropdowns(); $("newCatName").value="";$("newCatRename").value=""; dropdowns.old.setValue(categoryList[0]); dropdowns.selDel.setValue(categoryList[0]); setCatForm("add"); openModal("catManageModal"); };
+  $("closeCatManage").onclick=function(){ closeModal("catManageModal"); };
+  document.querySelectorAll('input[name="catOp"]').forEach(function(r){ r.onchange=function(){ setCatForm(r.value); }; });
+  $("saveCatManage").onclick=function(){
+    var op=document.querySelector('input[name="catOp"]:checked').value;
+    if(op==="add") doAddCat();
+    else if(op==="rename") doRenameCat();
+    else doDelCat();
+  };
+
+  // ---- 导入产品（合并追加/覆盖 + 恢复默认） ----
+  $("btnImport").onclick=function(){ openModal("importModal"); };
+  $("closeImport").onclick=function(){ closeModal("importModal"); };
+  $("btnPickFile").onclick=function(){ $("fileInput").click(); };
+  $("fileInput").onchange=async function(e){
+    var f=e.target.files[0];
+    if(!f) return;
+    var mode=document.querySelector('input[name="importMode"]:checked').value;
+    var isOverwrite=(mode==="overwrite");
+    try{
+      var raw=await readFile(f);
+      if(!Array.isArray(raw)) raw=[];
+      runImport(raw,isOverwrite);
+    }catch(err){ console.error(err); toast({title:"错误",message:"文件解析失败："+(err&&err.message||"请检查格式")}); }
+    finally{ e.target.value=""; }
+  };
+  $("btnResetDefault").onclick=function(){
+    toast({ title:"确认恢复默认", message:"将覆盖当前全部产品，恢复出厂默认数据，自定义新增的产品将丢失。建议先导出备份，确定继续？", showCancel:true, onConfirm:function(){
+      productDB=defaultData.map(normalize); categoryList=DEFAULT_CATS.slice(); save(); refreshCatDropdowns();
+      toast({title:"完成",message:"已恢复出厂默认产品库"});
+    }});
+  };
+  // 导入模板下载（CSV，含表头与示例行）
+  $("btnTemplate").onclick=function(){
+    var csv="\uFEFF分类,产品名称,产品代码,备注\n中行生肖卡,兔年生肖借记卡,102700001,示例产品\n中行联名卡,长城教师卡,102700005,\n";
+    download(new Blob([csv],{type:"text/csv;charset=utf-8;"}),"产品导入模板.csv");
+    toast({title:"已开始下载",message:"已下载「产品导入模板.csv」，请按格式填写后导入"});
+  };
+
+  // ---- 导出产品（合并全库/搜索结果 + 格式） ----
+  $("btnExport").onclick=function(){ updateExportBtn(); openModal("exportModal"); };
+  $("closeExport").onclick=function(){ closeModal("exportModal"); };
+  $("expJson").onclick=function(){ var d=exportCurrentData(); if(!d) return toast({title:"提示",message:"当前无可导出数据"}); download(new Blob([JSON.stringify(d,null,2)],{type:"application/json"}),"非预制卡产品库.json"); closeModal("exportModal"); };
+  $("expTxt").onclick=function(){ var d=exportCurrentData(); if(!d) return toast({title:"提示",message:"当前无可导出数据"}); var t="非预制卡产品库\n"; d.forEach(function(r){ t+=r.category+"｜"+r.name+"｜"+r.code+"｜"+(r.remark||"")+"\n"; }); download(new Blob([t],{type:"text/plain"}),"非预制卡产品库.txt"); closeModal("exportModal"); };
+  $("expCsv").onclick=function(){ var d=exportCurrentData(); if(!d) return toast({title:"提示",message:"当前无可导出数据"}); if(typeof XLSX==="undefined") return toast({title:"提示",message:"Excel库未加载，请联网后重试"}); var csv="\uFEFF"+XLSX.utils.sheet_to_csv(buildSheet(d)); download(new Blob([csv],{type:"text/csv;charset=utf-8;"}),"非预制卡产品库.csv"); closeModal("exportModal"); };
+  $("expXlsx").onclick=function(){ var d=exportCurrentData(); if(!d) return toast({title:"提示",message:"当前无可导出数据"}); if(typeof XLSX==="undefined") return toast({title:"提示",message:"Excel库未加载，请联网后重试"}); var ws=buildSheet(d); var wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,"产品清单"); XLSX.writeFile(wb,"非预制卡产品库.xlsx"); closeModal("exportModal"); };
+
+  // ---- 产品总览 ----
+  $("btnViewAll").onclick=function(){ batchMode=false; ovSelected.clear(); setBatchUI(); renderOverview(); openModal("overviewModal"); };
+  $("closeOverview").onclick=function(){ closeModal("overviewModal"); };
+  $("sortBtn").onclick=function(){ sortState.order=sortState.order==="asc"?"desc":"asc"; $("sortBtn").textContent=sortState.order==="asc"?"升序":"降序"; renderOverview(); };
+  // 总览全选
+  $("ovSelectAll").onchange=function(){
+    var checked=this.checked;
+    document.querySelectorAll("#overviewBody .ov-chk").forEach(function(cb){
+      cb.checked=checked; var k=cb.getAttribute("data-key");
+      if(checked) ovSelected.add(k); else ovSelected.delete(k);
+    });
+    updateOvSel();
+  };
+  // 总览批量删除模式：点「批量删除」才出现复选框
+  $("btnBatchMode").onclick=function(){ batchMode=true; ovSelected.clear(); setBatchUI(); renderOverview(); };
+  $("btnBatchCancel").onclick=function(){ batchMode=false; ovSelected.clear(); setBatchUI(); renderOverview(); };
+  // 总览批量删除
+  $("btnBatchDel").onclick=function(){
+    var n=ovSelected.size;
+    if(!n) return toast({title:"提示",message:"请先勾选要删除的产品"});
+    toast({ title:"确认删除", message:"确认删除选中的 "+n+" 条产品？此操作不可恢复", showCancel:true, onConfirm:function(){
+      productDB=productDB.filter(function(i){ return !ovSelected.has(keyOf(i)); });
+      ovSelected.clear(); save(); batchMode=false; setBatchUI(); renderOverview();
+      toast({title:"完成",message:"已删除 "+n+" 条产品"});
+    }});
+  };
+}
+
+// ====================== 程序入口：统一初始化（只执行一次） ======================
+function init(){
+  load();
+  updateCount();
+  updateExportBtn();
+
+  // 主页"选择分类"下拉
+  createDropdown("search","searchCatInput","searchCatDrop", catOpts(true), function(){
+    $("inpName").value=""; $("inpCode").value="";
+    setResult("r-empty","等待输入查询",["请在上方输入产品名称或产品代码"]);
+    currentSearchResult=[]; updateExportBtn();
+  });
+  dropdowns.search.setValue("全部");
+
+  // 各弹窗分类下拉
+  createDropdown("new","newCatInput","newCatDrop", catOpts(false));
+  createDropdown("old","oldCatInput","oldCatDrop", catOpts(false));
+  createDropdown("selDel","selDelCatInput","selDelCatDrop", catOpts(false));
+  createDropdown("editNew","editNewCatInput","editNewCatDrop", catOpts(false));
+  // 原产品分类下拉：含"全部分类"；切换分类时清空已选原产品，需重新选择
+  createDropdown("editOldCat","editOldCatInput","editOldCatDrop",
+    [{value:"全部分类",label:"全部分类"}].concat(catOpts(false)),
+    function(){ $("editOldName").value="";$("editOldCode").value="";$("editIndex").value=""; });
+  createDropdown("del","delCatInput","delCatDrop", catOpts(false), function(){ $("delName").value="";$("delCode").value=""; });
+
+  // 总览排序字段下拉（含"默认"）
+  createDropdown("sortField","sortFieldInput","sortFieldDrop",
+    [{value:"default",label:"默认"},{value:"category",label:"分类"},{value:"name",label:"产品名称"}],
+    function(v){ sortState.field=v; renderOverview(); });
+  dropdowns.sortField.setValue("default");
+
+  // 弹窗内名称/代码搜索
+  bindEditOldPicker("editOldName","dropEditOldName");
+  bindEditOldPicker("editOldCode","dropEditOldCode");
+  bindModalItemSearch("delName","delCode","del");
+
+  // 产品总览搜索
+  // 总览精准搜索：右侧箭头点击展开/收起下拉（输入时也弹匹配列表）
+  var ovSA=$("ovSearch").parentNode.querySelector(".arrow");
+  if(ovSA) bindArrowToggle(ovSA, $("ovSearchDrop"), ovExpandDrop);
+  $("ovSearch").addEventListener("input",debounce(function(){ overviewKw=$("ovSearch").value; $("ovClear").style.display=overviewKw.trim()?"flex":"none"; showOvSearchDrop(); renderOverview(); },200));
+  $("ovClear").onclick=function(){ overviewKw=""; $("ovSearch").value=""; $("ovClear").style.display="none"; var od=$("ovSearchDrop"); if(od) od.classList.remove("show"); renderOverview(); };
+
+  // 绑定全部按钮
+  bindAllButtons();
+
+  // 总览复选框：动态行，用事件委托（勾选/取消）
+  $("overviewBody").addEventListener("change",function(e){
+    var cb=e.target;
+    if(cb&&cb.classList&&cb.classList.contains("ov-chk")){
+      var k=cb.getAttribute("data-key");
+      if(cb.checked) ovSelected.add(k); else ovSelected.delete(k);
+      updateOvSel();
+    }
+  });
+}
+init();
+})();
+</script>
+
+</body>
+</html>

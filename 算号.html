@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>星虹算号</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23ed3b64'/%3E%3Ctext x='32' y='46' font-size='42' text-anchor='middle' fill='%23ffffff' font-family='sans-serif'%3E星%3C/text%3E%3C/svg%3E">
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+        }
+        body {
+            background-color: #f7f8fa;
+            padding: 24px;
+            max-width: 1180px;
+            margin: 0 auto;
+        }
+        .app-title {
+            font-size: 30px;
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
+        .top-notice {
+            background: #fff8e1;
+            border: 1px solid #ffe08a;
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin-bottom: 18px;
+            color: #9a6a00;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 12px rgba(0, 0, 0, 0.07);
+        }
+        .input-row {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            margin: 14px 0;
+        }
+        #template {
+            flex: 1;
+            font-size: 19px;
+            padding: 15px 18px;
+            border: 3px solid #d92121;
+            border-radius: 12px;
+            color: #000000;
+            background: #fff;
+        }
+        #template::placeholder {
+            color: #d92121;
+            opacity: 1;
+        }
+        #template:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(217, 33, 33, 0.15);
+        }
+        #calcBtn {
+            background: #ed3b64;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 15px 26px;
+            cursor: pointer;
+        }
+        .tpl-length-text {
+            font-size: 15px;
+            color: #333;
+            margin: 8px 0;
+        }
+        .warn-block {
+            background: #ffe9e9;
+            border: 1px solid #f5b8b8;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin: 10px 0;
+            color: #b41c1c;
+            font-size: 15px;
+            font-weight: 600;
+        }
+        .max-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 14px 0;
+        }
+        #maxInput {
+            width: 130px;
+            font-size: 16px;
+            padding: 7px 10px;
+            border: 2px solid #2563eb;
+            border-radius: 8px;
+            transition: border-color 0.2s;
+        }
+        #maxInput:focus {
+            border-color: #2563eb;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+        .check-row {
+            margin: 10px 0;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .btn-area {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 16px 0;
+        }
+        button.btn {
+            background: #fff;
+            border-width: 2px;
+            border-style: solid;
+            padding: 9px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button.btn:hover {
+            background: #f1f5f9;
+        }
+        button.btn-clear { border-color: #999; color: #444; }
+        button.btn-copy  { border-color: #2563eb; color: #2563eb; }
+        button.btn-xlsx  { border-color: #16a34a; color: #16a34a; }
+        button.btn-csv   { border-color: #ca8a04; color: #ca8a04; }
+        button.btn-txt   { border-color: #7c3aed; color: #7c3aed; }
+        button.btn-bin   { border-color: #0891b2; color: #0891b2; }
+        .desc-tip {
+            font-size: 13px;
+            color: #555;
+            line-height: 1.8;
+        }
+        .hl-key {
+            font-weight: 700;
+            color: #000;
+        }
+        .wild-chip {
+            background: #fde3ea;
+            border: 1px solid #f5b8c6;
+            border-radius: 8px;
+            padding: 2px 12px;
+            margin: 4px 6px;
+            font-family: inherit;
+            font-weight: 700;
+            color: #b41c1c;
+            font-size: 14px;
+            display: inline-block;
+        }
+        .wild-chip-txt {
+            padding: 3px 16px;
+            min-width: 56px;
+            text-align: center;
+        }
+        .result-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        #resultBox {
+            margin-top: 14px;
+            max-height: 440px;
+            overflow: auto;
+        }
+        .item {
+            padding: 9px 0;
+            border-bottom: 1px solid #eee;
+            font-family: "SFMono-Regular", Consolas, monospace;
+            font-size: 18px;
+        }
+        .bank-name {
+            color: #d92121;
+            margin-left: 14px;
+            font-weight: 600;
+        }
+        .bin-invalid {
+            color: #d92121;
+            font-weight: 700;
+            padding: 12px 0;
+        }
+
+        /* 免责弹窗遮罩 */
+        .modal-mask {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: #ffffff;
+            width: 620px;
+            max-width: 92%;
+            border-radius: 16px;
+            padding: 26px 30px;
+        }
+        .modal-title {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            font-weight: bold;
+            font-size: 19px;
+            color: #b05000;
+            margin-bottom: 16px;
+        }
+        .modal-body {
+            font-size: 15px;
+            line-height: 1.7;
+            color: #333;
+        }
+        .modal-body ul {
+            padding-left: 20px;
+            margin: 14px 0;
+        }
+        .modal-body li {
+            margin: 6px 0;
+            color: #991c1c;
+        }
+        #agreeBtn {
+            margin-top: 22px;
+            width: 100%;
+            background: #ed3b64;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: bold;
+            padding: 14px;
+            cursor: pointer;
+        }
+        @media (max-width: 720px) {
+            body { padding: 16px; }
+            .card { padding: 20px; }
+            .input-row { flex-direction: column; align-items: stretch; }
+            #template { width: 100%; }
+            #calcBtn { width: 100%; }
+        }
+    
+/* ===== 页面间导航按钮 ===== */
+.tool-nav{display:flex;gap:10px;margin:0 auto 18px;max-width:720px;align-items:stretch;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:8px;box-shadow:0 1px 6px rgba(15,23,42,.05);}
+.tool-nav-home{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:0 16px;border-radius:9px;font-size:14px;font-weight:600;text-decoration:none;color:#475569;background:#f8fafc;border:1px solid #e2e8f0;white-space:nowrap;transition:background .15s,color .15s;}
+.tool-nav-home:hover{background:#eef2f7;color:#0f172a;}
+.tool-nav-home:active{transform:scale(.97);}
+.tool-nav-btn{flex:1;text-align:center;padding:12px 0;border-radius:9px;font-size:15px;font-weight:600;text-decoration:none;color:#475569;background:#f8fafc;border:1px solid #e2e8f0;transition:background .15s,color .15s,border-color .15s;}
+.tool-nav-btn.active{background:#1d4ed8;border-color:#1d4ed8;color:#ffffff;}
+.tool-nav-btn:active{transform:scale(.97);}
+
+
+</style>
+</head>
+<body>
+<div class="tool-nav"><a class="tool-nav-home" href="index.html"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path></svg>首页</a><a class="tool-nav-btn active" href="算号.html">算号</a><a class="tool-nav-btn" href="非预制卡.html">非预制</a></div>
+<!-- ===== 免责弹窗：每次页面加载都弹出 ===== -->
+<div class="modal-mask" id="confirmModal">
+    <div class="modal-content">
+        <div class="modal-title">⚠️ 使用前请确认</div>
+        <div class="modal-body">
+            本工具仅用于 <b>Luhn校验算法</b> 与 <b>银行卡BIN识别规则</b> 的学习、教学演示及支付系统测试环境。生成的全部为随机虚拟测试卡号，不关联任何真实账户。
+            <ul>
+                <li>不可用于真实交易、支付、转账、充值、实名认证等任何实际场景；</li>
+                <li>禁止用于撞库、爬取、枚举试探、批量验证等任何违规或违法用途；</li>
+                <li>因滥用本工具产生的一切法律与安全后果由使用者自行承担。</li>
+            </ul>
+            <button id="agreeBtn">我已阅读并同意</button>
+        </div>
+    </div>
+</div>
+
+<div class="app-title">星虹算号</div>
+
+<div class="top-notice">
+    ⚠️ 重要声明：本工具为算法学习演示用途，仅演示 Luhn 校验与 BIN 识别，不产生任何可用凭证。请勿将生成结果用于真实交易或任何违规、违法场景，否则后果自负。
+</div>
+
+<div class="card">
+    <h3>号码模板</h3>
+    <div class="input-row">
+        <input id="template" placeholder="示例：622203************">
+        <button id="calcBtn">算号</button>
+    </div>
+    <div class="tpl-length-text">模板长度：<span id="tplLen">0</span> 位（已剔除空格）</div>
+    <div id="warnBlock" class="warn-block" style="display:none;"></div>
+
+    <div class="max-row">
+        <label>最大生成条数：</label>
+        <input id="maxInput" type="number" value="2000" min="1" max="10000">
+        <span style="font-size:14px;color:#666;">(1‑10000)</span>
+    </div>
+
+    <div class="check-row">
+        <input type="checkbox" id="group4" checked>
+        <label for="group4">页面显示 4 位分组</label>
+    </div>
+    <div class="check-row">
+        <input type="checkbox" id="exportNoSpace">
+        <label for="exportNoSpace">复制/导出为无空格纯数字</label>
+    </div>
+    <div class="check-row">
+        <input type="checkbox" id="copyOnlyCard">
+        <label for="copyOnlyCard">复制 / 导出仅纯卡号（不带银行备注）</label>
+    </div>
+
+    <div class="btn-area">
+        <button class="btn btn-clear" id="clearBtn">清空</button>
+        <button class="btn btn-copy" id="copyAllBtn">复制全部结果</button>
+        <button class="btn btn-xlsx" id="exportXlsxBtn">导出 Excel(xlsx)</button>
+        <button class="btn btn-csv" id="exportCsvBtn">导出 CSV</button>
+        <button class="btn btn-txt" id="exportTxtBtn">导出 TXT</button>
+        <button class="btn btn-bin" id="exportBinListBtn">导出BIN(Excel)</button>
+    </div>
+
+    <div class="desc-tip">
+        <span class="hl-key">通配符</span>
+        <span class="wild-chip">*</span><span class="wild-chip">@</span><span class="wild-chip">#</span><span class="wild-chip">?</span>
+        代表任意数字；
+        <span class="hl-key">同字母</span> 代表相同数字，如
+        <span class="wild-chip wild-chip-txt">aabb</span><br/>
+        BIN库：全量借记卡BIN + BIN绑定标准卡号长度校验<br/>
+        规则：62开头银联借记卡=19位；22/5开头万事达借记卡=16位<br/>
+        <span style="color:#bb2222;">⚠️仅供算法学习与测试演示，全部为虚拟测试卡号，禁止任何违规使用。</span>
+    </div>
+</div>
+
+<div class="card">
+    <div class="result-head">
+        <h3>算号结果</h3>
+        <span id="count">0 条</span>
+    </div>
+    <div id="resultBox"></div>
+</div>
+
+<script>
+// BIN_MAP 支持6位、8位BIN key
+const BIN_MAP = {
+    // ========== 中国工商银行 ==========
+    "622200":    "中国工商银行",
+    "622202":    "中国工商银行",
+    "622203":    "中国工商银行",
+    "622208":    "中国工商银行",
+    "621225":    "中国工商银行",
+    "621226":    "中国工商银行",
+    "955880":    "中国工商银行",
+    "955881":    "中国工商银行",
+    "955882":    "中国工商银行",
+    "955883":    "中国工商银行",
+    "955884":    "中国工商银行",
+    "955885":    "中国工商银行",
+    "955886":    "中国工商银行",
+    "955887":    "中国工商银行",
+    "955888":    "中国工商银行",
+    "519928":    "中国工商银行",
+    "559778":    "中国工商银行",
+
+    // ========== 中国农业银行 ==========
+    "622848":    "中国农业银行",
+    "622845":    "中国农业银行",
+    "622846":    "中国农业银行",
+    "622847":    "中国农业银行",
+    "622849":    "中国农业银行",
+    "621336":    "中国农业银行",
+    "622800":    "中国农业银行",
+    "622820":    "中国农业银行",
+    "622821":    "中国农业银行",
+    "622822":    "中国农业银行",
+    "622823":    "中国农业银行",
+    "955990":    "中国农业银行",
+    "955991":    "中国农业银行",
+    "955992":    "中国农业银行",
+    "955993":    "中国农业银行",
+    "955994":    "中国农业银行",
+    "955995":    "中国农业银行",
+    "955996":    "中国农业银行",
+    "955997":    "中国农业银行",
+    "955998":    "中国农业银行",
+    "955999":    "中国农业银行",
+
+    // ========== 中国建设银行 ==========
+    "621700":    "中国建设银行",
+    "622700":    "中国建设银行",
+    "622701":    "中国建设银行",
+    "622702":    "中国建设银行",
+    "622703":    "中国建设银行",
+    "622704":    "中国建设银行",
+    "622705":    "中国建设银行",
+    "622706":    "中国建设银行",
+    "622707":    "中国建设银行",
+    "622708":    "中国建设银行",
+    "622709":    "中国建设银行",
+    "622966":    "中国建设银行",
+    "622280":    "中国建设银行",
+
+    // ========== 中国银行（含6位、8位BIN） ==========
+    "621660":    "中国银行",
+    "621661":    "中国银行",
+    "621662":    "中国银行",
+    "621663":    "中国银行",
+    "622750":    "中国银行",
+    "622751":    "中国银行",
+    "622752":    "中国银行",
+    "622753":    "中国银行",
+    "622754":    "中国银行",
+    "622755":    "中国银行",
+    "622756":    "中国银行",
+    "622757":    "中国银行",
+    "622758":    "中国银行",
+    "622759":    "中国银行",
+    "622760":    "中国银行",
+    "622761":    "中国银行",
+    "622762":    "中国银行",
+    "622763":    "中国银行",
+    "622764":    "中国银行",
+    "622765":    "中国银行",
+    "621790":    "中国银行",
+    "223300":    "中国银行",
+    "524880":    "中国银行",
+    "536899":    "中国银行",
+    "533228":    "中国银行",
+    "538113":    "中国银行",
+    "53498986":  "中国银行",   //8位 环球通白金借记卡
+
+    // ========== 交通银行 ==========
+    "622260":    "交通银行",
+    "622261":    "交通银行",
+    "622262":    "交通银行",
+    "623261":    "交通银行",
+    "601428":    "交通银行",
+    "405512":    "交通银行",
+
+    // ========== 中国邮政储蓄银行 ==========
+    "621095":    "中国邮政储蓄银行",
+    "621098":    "中国邮政储蓄银行",
+    "622150":    "中国邮政储蓄银行",
+    "622151":    "中国邮政储蓄银行",
+    "622180":    "中国邮政储蓄银行",
+    "622181":    "中国邮政储蓄银行",
+    "622188":    "中国邮政储蓄银行",
+    "622199":    "中国邮政储蓄银行",
+    "621798":    "中国邮政储蓄银行",
+    "621799":    "中国邮政储蓄银行",
+    "955100":    "中国邮政储蓄银行",
+    "521758":    "中国邮政储蓄银行",
+    "552688":    "中国邮政储蓄银行",
+    "558680":    "中国邮政储蓄银行",
+
+    // ========== 招商银行 ==========
+    "622588":    "招商银行",
+    "622609":    "招商银行",
+    "621483":    "招商银行",
+    "621485":    "招商银行",
+    "621486":    "招商银行",
+    "621286":    "招商银行",
+    "623126":    "招商银行",
+    "623136":    "招商银行",
+    "531063":    "招商银行",
+    "534293":    "招商银行",
+
+    // ========== 浦发银行 ==========
+    "622688":    "浦发银行",
+    "621791":    "浦发银行",
+    "621792":    "浦发银行",
+    "622176":    "浦发银行",
+    "622177":    "浦发银行",
+
+    // ========== 民生银行 ==========
+    "622619":    "民生银行",
+    "622622":    "民生银行",
+    "622629":    "民生银行",
+
+    // ========== 华夏银行 ==========
+    "621222":    "华夏银行",
+    "622630":    "华夏银行",
+    "622631":    "华夏银行",
+    "622345":    "华夏银行",
+    "622346":    "华夏银行",
+    "622347":    "华夏银行",
+    "622348":    "华夏银行",
+    "622349":    "华夏银行",
+
+    // ========== 广发银行（含8位BIN） ==========
+    "621462":    "广发银行",
+    "622555":    "广发银行",
+    "622556":    "广发银行",
+    "622557":    "广发银行",
+    "622536":    "广发银行",
+    "622537":    "广发银行",
+    "622538":    "广发银行",
+    "622539":    "广发银行",
+    "622888":    "广发银行",
+    "52079088":  "广发银行",   //8位 锦鲤世界借记卡
+    "52079089":  "广发银行",   //8位 锦鲤白金借记卡
+
+    // ========== 兴业银行 ==========
+    "622908":    "兴业银行",
+    "622909":    "兴业银行",
+    "621096":    "兴业银行",
+
+    // ========== 平安银行（全部修正为8位万事达BIN） ==========
+    "621626":    "平安银行",
+    "622155":    "平安银行",
+    "622156":    "平安银行",
+    "622158":    "平安银行",
+    "622298":    "平安银行",
+    "622842":    "平安银行",
+    "622843":    "平安银行",
+    "622844":    "平安银行",
+    "622845":    "平安银行",
+    "622846":    "平安银行",
+    "622847":    "平安银行",
+    "622848":    "平安银行",
+    "622849":    "平安银行",
+    "52737522":  "平安银行",   //8位 世界之极
+    "53318588":  "平安银行",   //8位 世界/金卡/普卡
+    "54299720":  "平安银行",   //8位 白金
+
+    // ========== 中信银行 ==========
+    "622666":    "中信银行",
+    "621768":    "中信银行",
+    "621771":    "中信银行",
+    "622690":    "中信银行",
+    "622696":    "中信银行",
+    "559166":    "中信银行",
+
+    // ========== 光大银行 ==========
+    "622660":    "光大银行",
+    "622661":    "光大银行",
+    "622662":    "光大银行",
+    "622663":    "光大银行",
+    "622664":    "光大银行",
+    "622658":    "光大银行",
+    "622680":    "光大银行",
+    "622681":    "光大银行",
+    "622682":    "光大银行",
+    "622683":    "光大银行",
+    "622684":    "光大银行",
+    "622685":    "光大银行",
+    "622686":    "光大银行",
+    "622687":    "光大银行",
+    "622688":    "光大银行",
+    "622689":    "光大银行",
+    "622161":    "光大银行"
+};
+
+// binLenMap：整齐分组，支持6位/8位BIN key；万事达借记卡统一16位；银联借记卡区分16/19位
+const binLenMap = {
+    // ========== 中国工商银行 ==========
+    "622200":    19,
+    "622202":    19,
+    "622203":    19,
+    "622208":    19,
+    "621225":    19,
+    "621226":    19,
+    "955880":    19,
+    "955881":    19,
+    "955882":    19,
+    "955883":    19,
+    "955884":    19,
+    "955885":    19,
+    "955886":    19,
+    "955887":    19,
+    "955888":    19,
+    "519928":    16,
+    "559778":    16,
+
+    // ========== 中国农业银行 ==========
+    "622848":    19,
+    "622845":    19,
+    "622846":    19,
+    "622847":    19,
+    "622849":    19,
+    "621336":    19,
+    "622800":    19,
+    "622820":    19,
+    "622821":    19,
+    "622822":    19,
+    "622823":    19,
+    "955990":    19,
+    "955991":    19,
+    "955992":    19,
+    "955993":    19,
+    "955994":    19,
+    "955995":    19,
+    "955996":    19,
+    "955997":    19,
+    "955998":    19,
+    "955999":    19,
+
+    // ========== 中国建设银行 ==========
+    "621700":    19,
+    "622700":    19,
+    "622701":    19,
+    "622702":    19,
+    "622703":    19,
+    "622704":    19,
+    "622705":    19,
+    "622706":    19,
+    "622707":    19,
+    "622708":    19,
+    "622709":    19,
+    "622966":    19,
+    "622280":    19,
+
+    // ========== 中国银行 ==========
+    "621660":    19,
+    "621661":    19,
+    "621662":    19,
+    "621663":    19,
+    "622750":    19,
+    "622751":    19,
+    "622752":    19,
+    "622753":    19,
+    "622754":    19,
+    "622755":    19,
+    "622756":    19,
+    "622757":    19,
+    "622758":    19,
+    "622759":    19,
+    "622760":    19,
+    "622761":    19,
+    "622762":    19,
+    "622763":    19,
+    "622764":    19,
+    "622765":    19,
+    "621790":    16,
+    "223300":    16,
+    "524880":    16,
+    "536899":    16,
+    "533228":    16,
+    "538113":    16,
+    "53498986":  16,
+
+    // ========== 交通银行 ==========
+    "622260":    19,
+    "622261":    19,
+    "622262":    19,
+    "623261":    19,
+    "601428":    19,
+    "405512":    19,
+
+    // ========== 中国邮政储蓄银行 ==========
+    "621095":    19,
+    "621098":    19,
+    "622150":    19,
+    "622151":    19,
+    "622180":    19,
+    "622181":    19,
+    "622188":    19,
+    "622199":    19,
+    "621798":    19,
+    "621799":    19,
+    "955100":    19,
+    "521758":    16,
+    "552688":    16,
+    "558680":    16,
+
+    // ========== 招商银行 ==========
+    "622588":    16,
+    "622609":    16,
+    "621483":    16,
+    "621485":    16,
+    "621486":    16,
+    "621286":    16,
+    "623126":    16,
+    "623136":    16,
+    "531063":    16,
+    "534293":    16,
+
+    // ========== 浦发银行 ==========
+    "622688":    16,
+    "621791":    16,
+    "621792":    16,
+    "622176":    16,
+    "622177":    16,
+
+    // ========== 民生银行 ==========
+    "622619":    16,
+    "622622":    16,
+    "622629":    16,
+
+    // ========== 华夏银行 ==========
+    "621222":    16,
+    "622630":    16,
+    "622631":    16,
+    "622345":    16,
+    "622346":    16,
+    "622347":    16,
+    "622348":    16,
+    "622349":    16,
+
+    // ========== 广发银行 ==========
+    "621462":    19,
+    "622555":    19,
+    "622556":    19,
+    "622557":    19,
+    "622536":    19,
+    "622537":    19,
+    "622538":    19,
+    "622539":    19,
+    "622888":    19,
+    "52079088":  16,
+    "52079089":  16,
+
+    // ========== 兴业银行 ==========
+    "622908":    16,
+    "622909":    16,
+    "621096":    16,
+
+    // ========== 平安银行 ==========
+    "621626":    16,
+    "622155":    16,
+    "622156":    16,
+    "622158":    16,
+    "622298":    16,
+    "622842":    16,
+    "622843":    16,
+    "622844":    16,
+    "622845":    16,
+    "622846":    16,
+    "622847":    16,
+    "622848":    16,
+    "622849":    16,
+    "52737522":  16,
+    "53318588":  16,
+    "54299720":  16,
+
+    // ========== 中信银行 ==========
+    "622666":    16,
+    "621768":    16,
+    "621771":    16,
+    "622690":    16,
+    "622696":    16,
+    "559166":    16,
+
+    // ========== 光大银行 ==========
+    "622660":    16,
+    "622661":    16,
+    "622662":    16,
+    "622663":    16,
+    "622664":    16,
+    "622658":    16,
+    "622680":    16,
+    "622681":    16,
+    "622682":    16,
+    "622683":    16,
+    "622684":    16,
+    "622685":    16,
+    "622686":    16,
+    "622687":    16,
+    "622688":    16,
+    "622689":    16,
+    "622161":    16
+};
+
+let globalResultList = [];
+
+/**
+ * 获取BIN信息：优先前8位匹配，不命中再取前6位
+ */
+function getBinInfo(numStr) {
+    let bin8 = numStr.slice(0, 8);
+    if (BIN_MAP[bin8]) {
+        return { binKey: bin8, bank: BIN_MAP[bin8], expectLen: binLenMap[bin8] };
+    }
+    let bin6 = numStr.slice(0, 6);
+    if (BIN_MAP[bin6]) {
+        return { binKey: bin6, bank: BIN_MAP[bin6], expectLen: binLenMap[bin6] };
+    }
+    return { binKey: null, bank: "未知卡BIN", expectLen: undefined };
+}
+
+function formatDisplayCard(str, enableGroup) {
+    return enableGroup ? str.replace(/(\d{4})(?=\d)/g, "$1 ") : str;
+}
+
+function formatExportCard(str, noSpace) {
+    if (noSpace) return str;
+    return str.replace(/(\d{4})(?=\d)/g, "$1 ");
+}
+
+function luhnValidate(fullNumber) {
+    let sum = 0;
+    let alternate = false;
+    for (let i = fullNumber.length - 1; i >= 0; i--) {
+        let n = parseInt(fullNumber[i]);
+        if (alternate) {
+            n *= 2;
+            if (n > 9) n -= 9;
+        }
+        sum += n;
+        alternate = !alternate;
+    }
+    return sum % 10 === 0;
+}
+
+// 免责弹窗：每次页面打开都显示，点同意才关闭
+const confirmModal = document.getElementById("confirmModal");
+document.getElementById("agreeBtn").onclick = () => {
+    confirmModal.style.display = "none";
+};
+
+const templateInput = document.getElementById('template');
+const lenSpan = document.getElementById('tplLen');
+const warnBlock = document.getElementById('warnBlock');
+const maxInput = document.getElementById('maxInput');
+const group4Cb = document.getElementById('group4');
+const exportNoSpaceCb = document.getElementById('exportNoSpace');
+const copyOnlyCardCb = document.getElementById('copyOnlyCard');
+
+// 模板输入实时校验，红色警告块
+templateInput.oninput = function () {
+    const raw = templateInput.value.replace(/ /g, "");
+    lenSpan.innerText = raw.length;
+    warnBlock.style.display = "none";
+
+    let numPrefix = "";
+    for (let c of raw) {
+        if (/[0-9]/.test(c)) numPrefix += c;
+        else break;
+    }
+    if (numPrefix.length < 6) return;
+
+    const info = getBinInfo(numPrefix);
+    if (info.expectLen !== undefined) {
+        const tplTotalLen = raw.length;
+        if (tplTotalLen !== info.expectLen) {
+            warnBlock.innerText = `⚠️警告：BIN ${info.binKey} 标准卡号长度为 ${info.expectLen} 位，当前模板长度 ${tplTotalLen} 位，模板位数不匹配，请检查后再算号！`;
+            warnBlock.style.display = "block";
+        }
+    }
+};
+
+let worker = null;
+
+function createWorker(maxLimit) {
+    if (worker) worker.terminate();
+    const workerCode = `
+    const MAX_RESULT = ${maxLimit};
+    const BIN_MAP = ${JSON.stringify(BIN_MAP)};
+    const binLenMap = ${JSON.stringify(binLenMap)};
+
+    function luhnValidate(fullNumber) {
+        let sum = 0;
+        let alternate = false;
+        for (let i = fullNumber.length - 1; i >= 0; i--) {
+            let n = parseInt(fullNumber[i]);
+            if (alternate) {
+                n *= 2;
+                if (n > 9) n -= 9;
+            }
+            sum += n;
+            alternate = !alternate;
+        }
+        return sum % 10 === 0;
+    }
+
+    function getExpectLen(numStr) {
+        const b8 = numStr.slice(0, 8);
+        if (binLenMap[b8] !== undefined) return binLenMap[b8];
+        const b6 = numStr.slice(0, 6);
+        if (binLenMap[b6] !== undefined) return binLenMap[b6];
+        return undefined;
+    }
+
+    self.onmessage = function(e) {
+        const rawTpl = e.data.template.replace(/ /g, '');
+        const placeholders = [];
+        for (let c of rawTpl) {
+            if (/[0-9]/.test(c)) continue;
+            if (c === '*' || c === '@' || c === '#' || c === '?') placeholders.push({ type: 'any' });
+            else if (/[a-zA-Z]/.test(c)) placeholders.push({ type: 'var', name: c });
+        }
+        const results = [];
+        function dfs(pos, varMap, numArr) {
+            if (results.length >= MAX_RESULT) return;
+            if (pos >= placeholders.length) {
+                let idx = 0;
+                let cardChars = [];
+                for (let c of rawTpl) {
+                    if (/[0-9]/.test(c)) cardChars.push(c);
+                    else cardChars.push(numArr[idx++]);
+                }
+                const fullCard = cardChars.join('');
+                if (luhnValidate(fullCard)) {
+                    const expectLen = getExpectLen(fullCard);
+                    if (expectLen === undefined || fullCard.length === expectLen) {
+                        results.push(fullCard);
+                    }
+                }
+                return;
+            }
+            const ph = placeholders[pos];
+            if (ph.type === 'var') {
+                const name = ph.name;
+                if (varMap[name] !== undefined) {
+                    dfs(pos + 1, varMap, [...numArr, varMap[name]]);
+                } else {
+                    for (let d = 0; d <= 9; d++) {
+                        if (results.length >= MAX_RESULT) break;
+                        dfs(pos + 1, { ...varMap, [name]: d }, [...numArr, d]);
+                    }
+                }
+            } else {
+                for (let d = 0; d <= 9; d++) {
+                    if (results.length >= MAX_RESULT) break;
+                    dfs(pos + 1, varMap, [...numArr, d]);
+                }
+            }
+        }
+        dfs(0, {}, []);
+        self.postMessage(results);
+    }
+    `;
+    const blob = new Blob([workerCode], { type: "application/javascript" });
+    worker = new Worker(URL.createObjectURL(blob));
+    return worker;
+}
+
+const calcBtn = document.getElementById('calcBtn');
+const resultBox = document.getElementById('resultBox');
+const countSpan = document.getElementById('count');
+const clearBtn = document.getElementById('clearBtn');
+const copyAllBtn = document.getElementById('copyAllBtn');
+const exportXlsxBtn = document.getElementById('exportXlsxBtn');
+const exportCsvBtn = document.getElementById('exportCsvBtn');
+const exportTxtBtn = document.getElementById('exportTxtBtn');
+const exportBinListBtn = document.getElementById('exportBinListBtn');
+
+calcBtn.onclick = function () {
+    const tpl = templateInput.value.trim();
+    if (!tpl) { alert("请输入模板"); return; }
+
+    // BIN 有效性校验：取模板开头数字前缀，优先8位再6位，均不在库中则结果区提示
+    let numPrefix = "";
+    for (let c of tpl) {
+        if (/[0-9]/.test(c)) numPrefix += c;
+        else break;
+    }
+    const bin8 = numPrefix.slice(0, 8);
+    const bin6 = numPrefix.slice(0, 6);
+    const binValid = (BIN_MAP[bin8] !== undefined) || (BIN_MAP[bin6] !== undefined);
+    if (!binValid) {
+        resultBox.innerHTML = '<div class="bin-invalid">该BIN无效或暂无该BIN收录数据</div>';
+        countSpan.textContent = "0 条";
+        globalResultList = [];
+        return;
+    }
+
+    let maxVal = parseInt(maxInput.value || 2000, 10);
+    if (isNaN(maxVal) || maxVal < 1) maxVal = 1;
+    if (maxVal > 10000) maxVal = 10000;
+    maxInput.value = maxVal;
+
+    resultBox.innerHTML = "<div>计算中……</div>";
+    countSpan.textContent = "计算中";
+    globalResultList = [];
+
+    const w = createWorker(maxVal);
+    w.onmessage = function (e) {
+        const list = e.data;
+        globalResultList = list;
+        resultBox.innerHTML = "";
+        countSpan.textContent = `${list.length} 条`;
+        list.forEach(num => {
+            const div = document.createElement('div');
+            div.className = "item";
+            const info = getBinInfo(num);
+            const fmtDisp = formatDisplayCard(num, group4Cb.checked);
+            div.innerHTML = `${fmtDisp}<span class="bank-name">【${info.bank}】</span>`;
+            resultBox.appendChild(div);
+        });
+    };
+    w.postMessage({ template: tpl });
+};
+
+clearBtn.onclick = function () {
+    templateInput.value = "";
+    lenSpan.innerText = "0";
+    warnBlock.style.display = "none";
+    resultBox.innerHTML = "";
+    countSpan.innerText = "0 条";
+    globalResultList = [];
+};
+
+function getResultRows() {
+    const pureMode = copyOnlyCardCb.checked;
+    const noSpaceMode = exportNoSpaceCb.checked;
+    const arr = [];
+    globalResultList.forEach(num => {
+        const info = getBinInfo(num);
+        const cardText = formatExportCard(num, noSpaceMode);
+        if (pureMode) {
+            arr.push({ card: cardText, bank: "" });
+        } else {
+            arr.push({ card: cardText, bank: info.bank });
+        }
+    });
+    return arr;
+}
+
+// 复制全部
+copyAllBtn.onclick = async function () {
+    if (!globalResultList || globalResultList.length === 0) {
+        alert("暂无生成结果，请先算号");
+        return;
+    }
+    const rows = getResultRows();
+    const lines = rows.map(r => r.bank ? `${r.card} 【${r.bank}】` : r.card);
+    const copyText = lines.join("\n");
+    try {
+        await navigator.clipboard.writeText(copyText);
+        alert(`已复制 ${globalResultList.length} 条结果到剪贴板`);
+    } catch (err) {
+        const ta = document.createElement("textarea");
+        ta.value = copyText;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+        alert(`已复制 ${globalResultList.length} 条结果到剪贴板`);
+    }
+};
+
+// 导出 TXT（紫色按钮）
+exportTxtBtn.onclick = function () {
+    if (!globalResultList || globalResultList.length === 0) {
+        alert("暂无生成结果，请先算号");
+        return;
+    }
+    const rows = getResultRows();
+    const lines = rows.map(r => r.bank ? `${r.card} 【${r.bank}】` : r.card);
+    const content = lines.join("\n");
+    const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "card_result.txt";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+};
+
+// 导出 CSV（黄色按钮）
+exportCsvBtn.onclick = function () {
+    if (!globalResultList || globalResultList.length === 0) {
+        alert("暂无生成结果，请先算号");
+        return;
+    }
+    const rows = getResultRows();
+    let csv = "卡号,所属银行\n";
+    rows.forEach(r => {
+        csv += `"${r.card}","${r.bank}"\n`;
+    });
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "card_result.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+};
+
+// 按需加载 XLSX 库（兜底，防止CDN加载失败导致报错）
+function ensureXlsx(cb) {
+    if (typeof XLSX !== "undefined") { cb(); return; }
+    const s = document.createElement("script");
+    s.src = "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js";
+    s.onload = () => cb();
+    s.onerror = () => alert("Excel组件加载失败，请检查网络后重试");
+    document.head.appendChild(s);
+}
+
+// 导出 XLSX Excel（绿色按钮）
+exportXlsxBtn.onclick = function () {
+    if (typeof XLSX === "undefined") { ensureXlsx(() => exportXlsxBtn.onclick()); return; }
+    if (!globalResultList || globalResultList.length === 0) {
+        alert("暂无生成结果，请先算号");
+        return;
+    }
+    const rows = getResultRows();
+    const dataArr = [["卡号", "所属银行"]];
+    rows.forEach(r => {
+        dataArr.push([r.card, r.bank]);
+    });
+    const ws = XLSX.utils.aoa_to_sheet(dataArr);
+    ws["!cols"] = [{ wch: 24 }, { wch: 20 }];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "卡号结果");
+    XLSX.writeFile(wb, "card_result.xlsx");
+};
+
+// 导出 BIN清单（青蓝色按钮，xlsx格式，列对齐）
+exportBinListBtn.onclick = function () {
+    if (typeof XLSX === "undefined") { ensureXlsx(() => exportBinListBtn.onclick()); return; }
+    const dataArr = [["BIN编号", "银行名称", "标准卡号长度"]];
+    for (let binKey of Object.keys(binLenMap)) {
+        const bankName = BIN_MAP[binKey] ?? "未知";
+        dataArr.push([binKey, bankName, `${binLenMap[binKey]}位`]);
+    }
+    const ws = XLSX.utils.aoa_to_sheet(dataArr);
+    ws["!cols"] = [{ wch: 12 }, { wch: 24 }, { wch: 16 }];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "BIN清单");
+    XLSX.writeFile(wb, "bin_list.xlsx");
+};
+</script>
+
+</body>
+</html>

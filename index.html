@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>卡号工具</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231d4ed8'/%3E%3Ctext x='32' y='46' font-size='38' text-anchor='middle' fill='%23ffffff' font-family='sans-serif'%3E卡%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --c1:#ed3b64; --c1-soft:#fde8ee; --c1-deep:#c2264a;
+  --c2:#2563eb; --c2-soft:#e8effd; --c2-deep:#1d4ed8;
+  --ink:#0f172a; --ink2:#475569; --ink3:#94a3b8;
+  --line:#e2e8f0;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;color:var(--ink);background:linear-gradient(160deg,#eef4ff 0%,#f8fafc 55%,#fdf2f7 100%);min-height:100vh;line-height:1.6;-webkit-tap-highlight-color:transparent;}
+.shell{max-width:980px;margin:0 auto;padding:20px 18px 44px;}
+
+
+/* Hero */
+.hero{text-align:center;padding:46px 10px 8px;}
+.hero .badge{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ink2);background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px 14px;}
+.hero .badge .dot{width:7px;height:7px;border-radius:50%;background:#10b981;}
+.hero h1{font-size:42px;margin:16px 0 6px;letter-spacing:2px;}
+.hero .sub{color:var(--ink2);font-size:16px;font-weight:600;}
+.hero .lead{color:var(--ink3);font-size:14px;max-width:580px;margin:12px auto 0;}
+
+/* 工具卡片 */
+.tools{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:28px;}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 6px 20px rgba(15,23,42,.06);display:flex;flex-direction:column;text-decoration:none;color:inherit;transition:transform .16s,box-shadow .16s,border-color .16s;}
+.card:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(15,23,42,.10);}
+.card .head{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.card .ic{width:48px;height:48px;border-radius:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.card.one .ic{background:var(--c1-soft);color:var(--c1-deep);}
+.card.two .ic{background:var(--c2-soft);color:var(--c2-deep);}
+.card .tag{margin-left:auto;font-size:12px;color:var(--ink3);border:1px solid var(--line);border-radius:999px;padding:2px 10px;white-space:nowrap;}
+.card h2{margin:0;font-size:22px;}
+.card .desc{color:var(--ink2);font-size:14px;margin:0 0 15px;}
+.feats{list-style:none;margin:0 0 20px;padding:0;display:flex;flex-direction:column;gap:9px;}
+.feats li{display:flex;align-items:flex-start;gap:9px;font-size:13.5px;color:var(--ink2);}
+.feats .ck{flex-shrink:0;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-top:2px;}
+.card.one .feats .ck{background:var(--c1-soft);color:var(--c1-deep);}
+.card.two .feats .ck{background:var(--c2-soft);color:var(--c2-deep);}
+.cta{margin-top:auto;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;border-radius:11px;font-size:15px;font-weight:700;color:#fff;border:none;cursor:pointer;text-decoration:none;transition:filter .15s;}
+.cta svg{transition:transform .15s;}
+.cta:hover svg{transform:translateX(3px);}
+.card.one .cta{background:var(--c1);}
+.card.two .cta{background:var(--c2);}
+.card.one .cta:hover{filter:brightness(1.06);}
+.card.two .cta:hover{filter:brightness(1.06);}
+
+/* 使用提示 */
+.notes{margin-top:20px;background:rgba(255,255,255,.7);border:1px solid var(--line);border-radius:14px;padding:16px 20px;display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.note{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--ink2);}
+.note .ndot{width:8px;height:8px;border-radius:50%;margin-top:7px;flex-shrink:0;}
+.note.one .ndot{background:var(--c1);}
+.note.two .ndot{background:var(--c2);}
+
+footer{margin-top:26px;text-align:center;color:var(--ink3);font-size:12.5px;}
+
+@media(max-width:640px){
+  .hero h1{font-size:30px;}
+  .tools{grid-template-columns:1fr;}
+  .notes{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <section class="hero">
+    <span class="badge"><span class="dot"></span>内部工作台</span>
+    <h1>卡号工具</h1>
+    <p class="sub">算号与产品管理的日常助手</p>
+    <p class="lead">集中存放两个常用工具：星虹算号用于算法演示与测试卡号生成，非预制卡用于产品代码查询与维护。点击下方卡片即可进入。</p>
+  </section>
+
+  <section class="tools">
+    <!-- 算号 -->
+    <a class="card one" href="算号.html">
+      <div class="head">
+        <span class="ic">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="8" y1="6" x2="16" y2="6"></line><circle cx="8" cy="12.5" r="1"></circle><circle cx="12" cy="12.5" r="1"></circle><circle cx="16" cy="12.5" r="1"></circle><circle cx="8" cy="17" r="1"></circle><circle cx="12" cy="17" r="1"></circle><circle cx="16" cy="17" r="1"></circle></svg>
+        </span>
+        <span class="tag">算法演示</span>
+      </div>
+      <h2>算号</h2>
+      <p class="desc">Luhn 校验与银行卡 BIN 识别，生成随机虚拟测试卡号。</p>
+      <ul class="feats">
+        <li><span class="ck"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>通配符模板批量算号（* @ # ? 与同字母）</li>
+        <li><span class="ck"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>自动识别 BIN 并校验卡号长度</li>
+        <li><span class="ck"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>单次最多生成 10000 条</li>
+        <li><span class="ck"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>复制结果、导出 Excel / CSV / TXT / BIN 清单</li>
+      </ul>
+      <span class="cta">进入工具
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+      </span>
+    </a>
+
+    <!-- 非预制 -->
+    <a class="card two" href="非预制卡.html">
+      <div class="head">
+        <span class="ic">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 5v14c0 1.7-4 3-9 3s-9-1.3-9-3V5"></path><path d="M3 12c0 1.7 4 3 9 3s9-1.3 9-3"></path></svg>
+        </span>
+        <span class="tag">产品管理</span>
+      </div>
+      <h2>非预制</h2>
+      <p class="desc">个人开非预制卡产品名称与代码双向查询、分类与数据维护。</p>
+      <ul class="feats">
+        <li><span class="ck"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>产品名称 / 代码模糊双向查询</li>
+        <li><span class="ck"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>产品新增、编辑、删除与分类管理</li>
+        <li><span class="ck"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>批量导入 / 导出（JSON / TXT / CSV / Excel）</li>
+        <li><span class="ck"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>数据保存在本机浏览器，可随时导出备份</li>
+      </ul>
+      <span class="cta">进入工具
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+      </span>
+    </a>
+  </section>
+
+  <section class="notes">
+    <div class="note one"><span class="ndot"></span><span>算号工具仅用于算法学习与测试演示，生成的全部为随机虚拟测试卡号，请勿用于真实交易或任何违规用途。</span></div>
+    <div class="note two"><span class="ndot"></span><span>非预制卡数据保存在本浏览器 localStorage，清理缓存或换设备会丢失，请定期使用「导出产品」备份。</span></div>
+  </section>
+
+  <footer>卡号工具 · 仅供内部学习与测试使用</footer>
+</div>
+</body>
+</html>
